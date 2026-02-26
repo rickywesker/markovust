@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    @apply bg-slate-950 text-slate-100 antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    margin: 0;
+  }
+}
+
+@layer components {
+  .section-card {
+    @apply bg-slate-900/80 backdrop-blur-sm border border-slate-800 rounded-2xl p-8 shadow-xl;
+  }
+  .math-block {
+    @apply bg-slate-800/50 border border-slate-700 rounded-xl p-6 my-4 overflow-x-auto;
+  }
+  .nav-link {
+    @apply px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200;
+  }
+  .nav-link:hover {
+    @apply bg-slate-800 text-white;
+  }
+  .nav-link.active {
+    @apply bg-indigo-600 text-white;
+  }
+  .btn-primary {
+    @apply px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-medium transition-all duration-200 shadow-lg shadow-indigo-500/25 cursor-pointer;
+  }
+  .btn-secondary {
+    @apply px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-medium transition-all duration-200 border border-slate-700 cursor-pointer;
+  }
+  .definition-box {
+    @apply border-l-4 border-indigo-500 bg-indigo-500/10 rounded-r-xl p-6 my-4;
+  }
+  .theorem-box {
+    @apply border-l-4 border-amber-500 bg-amber-500/10 rounded-r-xl p-6 my-4;
+  }
+  .example-box {
+    @apply border-l-4 border-emerald-500 bg-emerald-500/10 rounded-r-xl p-6 my-4;
+  }
+  .exercise-box {
+    @apply border-l-4 border-purple-500 bg-purple-500/10 rounded-r-xl p-6 my-4;
+  }
+}
