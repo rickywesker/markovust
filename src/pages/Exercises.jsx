@@ -834,6 +834,579 @@ function Exercise34({ onAttempt, onSolve }) {
   )
 }
 
+/* ═══════════════════ EXERCISE 3.5 ═══════════════════ */
+
+function Exercise35({ onAttempt, onSolve }) {
+  const [selected, setSelected] = useState(null)
+  const [submitted, setSubmitted] = useState(false)
+  const correct = 'b'
+
+  const handleSubmit = () => {
+    if (selected) {
+      setSubmitted(true)
+      onAttempt?.()
+      if (selected === correct) onSolve?.()
+    }
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="exercise-box"
+    >
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <h3 className="text-xl font-bold text-purple-300">Exercise 3.5 &mdash; Two-Step Transition</h3>
+        <Stars n={1} />
+      </div>
+
+      <div className="mt-4 text-slate-300 space-y-2 text-sm leading-relaxed">
+        <p>
+          A weather model has three states: <InlineMath math="S" /> (Sunny), <InlineMath math="C" /> (Cloudy),
+          and <InlineMath math="R" /> (Rainy), with transition matrix
+        </p>
+        <BlockMath math="P = \begin{pmatrix} 0.6 & 0.3 & 0.1 \\ 0.2 & 0.5 & 0.3 \\ 0.3 & 0.3 & 0.4 \end{pmatrix}" />
+        <p className="text-slate-400 text-xs">(rows/columns in order <InlineMath math="S, C, R" />)</p>
+        <p>
+          Compute <InlineMath math="P_{SR}^{(2)}" />, the probability that starting from Sunny, the weather is Rainy after exactly 2 days.
+        </p>
+      </div>
+
+      <div className="mt-6 space-y-2">
+        {[
+          { value: 'a', label: '0.13' },
+          { value: 'b', label: '0.19' },
+          { value: 'c', label: '0.25' },
+          { value: 'd', label: '0.31' },
+        ].map(opt => {
+          let style = 'bg-slate-800/60 border-slate-700 hover:border-purple-500/50'
+          if (submitted && opt.value === correct) style = 'bg-emerald-500/15 border-emerald-500'
+          else if (submitted && opt.value === selected && opt.value !== correct) style = 'bg-red-500/15 border-red-500'
+          else if (!submitted && opt.value === selected) style = 'bg-purple-500/15 border-purple-500'
+
+          return (
+            <button
+              key={opt.value}
+              onClick={() => { if (!submitted) setSelected(opt.value) }}
+              className={`w-full text-left px-4 py-3 rounded-xl border text-sm transition-all ${style} ${submitted ? '' : 'cursor-pointer'}`}
+            >
+              <span className="text-slate-300">{opt.label}</span>
+              {submitted && opt.value === correct && <span className="ml-2 text-emerald-400">-- Correct</span>}
+              {submitted && opt.value === selected && opt.value !== correct && <span className="ml-2 text-red-400">-- Incorrect</span>}
+            </button>
+          )
+        })}
+        {!submitted && (
+          <button onClick={handleSubmit} disabled={!selected} className="btn-primary text-sm mt-2 disabled:opacity-40">
+            Submit Answer
+          </button>
+        )}
+      </div>
+
+      <HintSection
+        hints={[
+          <span key="h1">The 2-step transition probability is the <InlineMath math="(S,R)" /> entry of <InlineMath math="P^2 = P \cdot P" />.</span>,
+          <span key="h2">Compute the dot product of row <InlineMath math="S" /> with column <InlineMath math="R" />: <InlineMath math="P_{SR}^{(2)} = \sum_k P_{Sk} \cdot P_{kR}" />.</span>,
+        ]}
+      />
+
+      <SolutionToggle onReveal={() => { onAttempt?.(); if (!submitted) onSolve?.() }}>
+        <p>We compute <InlineMath math="P_{SR}^{(2)} = (P^2)_{SR}" /> using the Chapman-Kolmogorov equation:</p>
+        <BlockMath math="P_{SR}^{(2)} = P_{SS}\,P_{SR} + P_{SC}\,P_{CR} + P_{SR}\,P_{RR}" />
+        <BlockMath math="= (0.6)(0.1) + (0.3)(0.3) + (0.1)(0.4)" />
+        <BlockMath math="= 0.06 + 0.09 + 0.04 = 0.19" />
+        <p>
+          So the probability of going from Sunny to Rainy in exactly 2 steps is <strong className="text-emerald-400">0.19</strong>.
+        </p>
+      </SolutionToggle>
+    </motion.div>
+  )
+}
+
+/* ═══════════════════ EXERCISE 3.6 ═══════════════════ */
+
+function Exercise36({ onAttempt, onSolve }) {
+  const statements = [
+    {
+      text: <span>If <InlineMath math="\{X_n\}" /> is a Markov chain, then <InlineMath math="X_{n+1}" /> is independent of <InlineMath math="X_{n-1}" />.</span>,
+      answer: false,
+      explanation: <span>False. <InlineMath math="X_{n+1}" /> is <em>conditionally</em> independent of <InlineMath math="X_{n-1}" /> <strong>given</strong> <InlineMath math="X_n" />, but they are generally not (unconditionally) independent. For example, if <InlineMath math="X_{n-1} = i" /> makes <InlineMath math="X_n = j" /> very likely, and <InlineMath math="X_n = j" /> makes <InlineMath math="X_{n+1} = k" /> very likely, then knowing <InlineMath math="X_{n-1} = i" /> gives information about <InlineMath math="X_{n+1}" />.</span>,
+    },
+    {
+      text: <span>The rows of a transition matrix must each sum to 1.</span>,
+      answer: true,
+      explanation: <span>True. Each row <InlineMath math="i" /> represents a probability distribution over the next state: <InlineMath math="\sum_j p_{ij} = 1" /> for all <InlineMath math="i" />. This is the definition of a stochastic matrix.</span>,
+    },
+    {
+      text: <span>If a Markov chain has transition matrix <InlineMath math="P" />, then <InlineMath math="P^n_{ij}" /> gives the probability of going from state <InlineMath math="i" /> to state <InlineMath math="j" /> in exactly <InlineMath math="n" /> steps.</span>,
+      answer: true,
+      explanation: <span>True. This is exactly the Chapman-Kolmogorov equation: <InlineMath math="P^{(n)}_{ij} = (P^n)_{ij}" />.</span>,
+    },
+    {
+      text: <span>The Markov property means that the future and past are independent.</span>,
+      answer: false,
+      explanation: <span>False. The Markov property says the future and past are <em>conditionally independent given the present</em>. Without conditioning on the present state, the future and past are generally dependent.</span>,
+    },
+  ]
+
+  const [answers, setAnswers] = useState({})
+  const [showResults, setShowResults] = useState(false)
+
+  const handleSelect = (idx, val) => {
+    if (!showResults) setAnswers(prev => ({ ...prev, [idx]: val }))
+  }
+
+  const handleSubmit = () => {
+    if (Object.keys(answers).length === statements.length) {
+      setShowResults(true)
+      onAttempt?.()
+      const allCorrect = statements.every((s, i) => answers[i] === s.answer)
+      if (allCorrect) onSolve?.()
+    }
+  }
+
+  const score = showResults ? statements.filter((s, i) => answers[i] === s.answer).length : 0
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="exercise-box"
+    >
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <h3 className="text-xl font-bold text-purple-300">Exercise 3.6 &mdash; True or False</h3>
+        <Stars n={1} />
+      </div>
+
+      <div className="mt-4 text-slate-300 text-sm leading-relaxed">
+        <p>Determine whether each statement is true or false.</p>
+      </div>
+
+      <div className="mt-6 space-y-4">
+        {statements.map((s, idx) => (
+          <div key={idx} className="bg-slate-800/50 rounded-xl p-4 border border-slate-700 space-y-2">
+            <p className="text-slate-300 text-sm">{idx + 1}. {s.text}</p>
+            <div className="flex gap-3">
+              {[true, false].map(val => {
+                let btnStyle = 'bg-slate-700/60 border-slate-600 hover:border-purple-500/50'
+                if (showResults && val === s.answer) btnStyle = 'bg-emerald-500/15 border-emerald-500'
+                else if (showResults && answers[idx] === val && val !== s.answer) btnStyle = 'bg-red-500/15 border-red-500'
+                else if (!showResults && answers[idx] === val) btnStyle = 'bg-purple-500/15 border-purple-500'
+
+                return (
+                  <button
+                    key={String(val)}
+                    onClick={() => handleSelect(idx, val)}
+                    className={`px-4 py-2 rounded-lg border text-sm transition-all ${btnStyle} ${showResults ? '' : 'cursor-pointer'}`}
+                  >
+                    {val ? 'True' : 'False'}
+                  </button>
+                )
+              })}
+            </div>
+            {showResults && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-xs text-slate-400 mt-1">
+                {s.explanation}
+              </motion.div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {!showResults && (
+        <button
+          onClick={handleSubmit}
+          disabled={Object.keys(answers).length < statements.length}
+          className="btn-primary text-sm mt-4 disabled:opacity-40"
+        >
+          Submit All
+        </button>
+      )}
+      {showResults && (
+        <p className="mt-4 text-sm font-semibold text-slate-300">
+          Score: <span className={score === statements.length ? 'text-emerald-400' : 'text-amber-400'}>{score}/{statements.length}</span>
+        </p>
+      )}
+    </motion.div>
+  )
+}
+
+/* ═══════════════════ EXERCISE 3.7 ═══════════════════ */
+
+function Exercise37({ onAttempt, onSolve }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="exercise-box"
+    >
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <h3 className="text-xl font-bold text-purple-300">Exercise 3.7 &mdash; Weather Modeling</h3>
+        <Stars n={2} />
+      </div>
+
+      <div className="mt-4 text-slate-300 space-y-2 text-sm leading-relaxed">
+        <p>
+          A meteorologist observes that tomorrow's weather depends only on today's weather (not on earlier days).
+          The weather can be <InlineMath math="\text{Dry (D)}" /> or <InlineMath math="\text{Wet (W)}" />.
+          Historical data shows:
+        </p>
+        <ul className="list-disc list-inside ml-2 space-y-1">
+          <li>If today is Dry, tomorrow is Dry with probability 0.8 and Wet with probability 0.2.</li>
+          <li>If today is Wet, tomorrow is Dry with probability 0.4 and Wet with probability 0.6.</li>
+        </ul>
+        <ol className="list-decimal list-inside space-y-1 ml-2 mt-3">
+          <li>Identify the state space and explain why this is a Markov chain.</li>
+          <li>Write down the transition matrix <InlineMath math="P" />.</li>
+          <li>If today is Wet, what is the probability that it will be Dry two days from now?</li>
+        </ol>
+      </div>
+
+      <HintSection
+        hints={[
+          <span key="h1">The state space is simply the set of possible weather outcomes: <InlineMath math="S = \{D, W\}" />.</span>,
+          <span key="h2">For part (c), compute <InlineMath math="P^{(2)}_{WD}" /> using <InlineMath math="P^2" /> or the Chapman-Kolmogorov equation.</span>,
+          <span key="h3"><InlineMath math="P^{(2)}_{WD} = P_{WD} \cdot P_{DD} + P_{WW} \cdot P_{WD}" />.</span>,
+        ]}
+      />
+
+      <SolutionToggle onReveal={() => { onAttempt?.(); onSolve?.() }}>
+        <p><strong className="text-indigo-300">(a)</strong> The state space is <InlineMath math="S = \{D, W\}" />. The process is Markov because the problem states that tomorrow's weather depends <em>only</em> on today's weather.</p>
+
+        <p className="mt-3"><strong className="text-indigo-300">(b)</strong> The transition matrix is:</p>
+        <BlockMath math="P = \begin{pmatrix} 0.8 & 0.2 \\ 0.4 & 0.6 \end{pmatrix}" />
+        <p className="text-slate-400 text-xs">(rows/columns in order <InlineMath math="D, W" />)</p>
+
+        <p className="mt-3"><strong className="text-indigo-300">(c)</strong> We compute <InlineMath math="P^{(2)}_{WD}" />:</p>
+        <BlockMath math="P^{(2)}_{WD} = P_{WD}\cdot P_{DD} + P_{WW}\cdot P_{WD} = (0.4)(0.8) + (0.6)(0.4) = 0.32 + 0.24 = 0.56" />
+        <p>So there is a <strong className="text-emerald-400">56%</strong> chance of Dry weather two days from now, given that today is Wet.</p>
+      </SolutionToggle>
+    </motion.div>
+  )
+}
+
+/* ═══════════════════ EXERCISE 3.8 ═══════════════════ */
+
+function Exercise38({ onAttempt, onSolve }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="exercise-box"
+    >
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <h3 className="text-xl font-bold text-purple-300">Exercise 3.8 &mdash; Stationary Distribution</h3>
+        <Stars n={2} />
+      </div>
+
+      <div className="mt-4 text-slate-300 space-y-2 text-sm leading-relaxed">
+        <p>
+          Consider the Markov chain with transition matrix
+        </p>
+        <BlockMath math="P = \begin{pmatrix} 0.7 & 0.3 \\ 0.4 & 0.6 \end{pmatrix}" />
+        <p>
+          Find the stationary distribution <InlineMath math="\boldsymbol{\pi} = (\pi_1, \pi_2)" />.
+        </p>
+      </div>
+
+      <HintSection
+        hints={[
+          <span key="h1">The stationary distribution satisfies <InlineMath math="\boldsymbol{\pi} P = \boldsymbol{\pi}" /> and <InlineMath math="\pi_1 + \pi_2 = 1" />.</span>,
+          <span key="h2">Write out <InlineMath math="\boldsymbol{\pi} P = \boldsymbol{\pi}" />: this gives <InlineMath math="0.7\pi_1 + 0.4\pi_2 = \pi_1" /> and <InlineMath math="0.3\pi_1 + 0.6\pi_2 = \pi_2" />. Both simplify to the same equation.</span>,
+          <span key="h3">From the first equation: <InlineMath math="-0.3\pi_1 + 0.4\pi_2 = 0" />, so <InlineMath math="\pi_2 = \frac{3}{4}\pi_1" />. Now use <InlineMath math="\pi_1 + \pi_2 = 1" />.</span>,
+        ]}
+      />
+
+      <SolutionToggle onReveal={() => { onAttempt?.(); onSolve?.() }}>
+        <p>We solve <InlineMath math="\boldsymbol{\pi} P = \boldsymbol{\pi}" /> with <InlineMath math="\pi_1 + \pi_2 = 1" />.</p>
+        <p className="mt-2">Writing out the first equation:</p>
+        <BlockMath math="0.7\pi_1 + 0.4\pi_2 = \pi_1 \quad \Longrightarrow \quad -0.3\pi_1 + 0.4\pi_2 = 0 \quad \Longrightarrow \quad \pi_2 = \tfrac{3}{4}\pi_1" />
+        <p>Substituting into the normalization condition:</p>
+        <BlockMath math="\pi_1 + \tfrac{3}{4}\pi_1 = 1 \quad \Longrightarrow \quad \tfrac{7}{4}\pi_1 = 1 \quad \Longrightarrow \quad \pi_1 = \tfrac{4}{7}" />
+        <BlockMath math="\pi_2 = 1 - \tfrac{4}{7} = \tfrac{3}{7}" />
+        <p>The stationary distribution is:</p>
+        <BlockMath math="\boldsymbol{\pi} = \left(\frac{4}{7},\; \frac{3}{7}\right) \approx (0.571,\; 0.429)" />
+        <p className="mt-2 text-slate-400 text-xs">
+          <strong>Verification:</strong> <InlineMath math="\boldsymbol{\pi} P = (0.7 \cdot \frac{4}{7} + 0.4 \cdot \frac{3}{7},\; 0.3 \cdot \frac{4}{7} + 0.6 \cdot \frac{3}{7}) = (\frac{4}{7}, \frac{3}{7}) = \boldsymbol{\pi}" />.
+        </p>
+      </SolutionToggle>
+    </motion.div>
+  )
+}
+
+/* ═══════════════════ EXERCISE 3.9 ═══════════════════ */
+
+function Exercise39({ onAttempt, onSolve }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="exercise-box"
+    >
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <h3 className="text-xl font-bold text-purple-300">Exercise 3.9 &mdash; Gambler's Ruin</h3>
+        <Stars n={2} />
+      </div>
+
+      <div className="mt-4 text-slate-300 space-y-2 text-sm leading-relaxed">
+        <p>
+          A gambler starts with <InlineMath math="\$2" />. Each round, they win <InlineMath math="\$1" /> with
+          probability <InlineMath math="p = 1/2" /> or lose <InlineMath math="\$1" /> with probability <InlineMath math="1/2" />.
+          The game ends when the gambler reaches <InlineMath math="\$4" /> (wins) or <InlineMath math="\$0" /> (ruin).
+        </p>
+        <ol className="list-decimal list-inside space-y-1 ml-2">
+          <li>What is the state space and what are the absorbing states?</li>
+          <li>What is the probability of ruin (reaching <InlineMath math="\$0" />) starting from <InlineMath math="\$2" />?</li>
+        </ol>
+      </div>
+
+      <HintSection
+        hints={[
+          <span key="h1">The state space is <InlineMath math="S = \{0, 1, 2, 3, 4\}" />, with absorbing states <InlineMath math="0" /> and <InlineMath math="4" />.</span>,
+          <span key="h2">Let <InlineMath math="r_i" /> be the probability of ruin starting from state <InlineMath math="i" />. Use first-step analysis: <InlineMath math="r_i = \frac{1}{2}r_{i-1} + \frac{1}{2}r_{i+1}" /> for <InlineMath math="i = 1, 2, 3" />, with <InlineMath math="r_0 = 1" /> and <InlineMath math="r_4 = 0" />.</span>,
+          <span key="h3">For the symmetric case <InlineMath math="p = 1/2" />, the ruin probability from state <InlineMath math="i" /> with target <InlineMath math="N" /> is <InlineMath math="r_i = 1 - i/N" />.</span>,
+        ]}
+      />
+
+      <SolutionToggle onReveal={() => { onAttempt?.(); onSolve?.() }}>
+        <p><strong className="text-indigo-300">(a)</strong> State space: <InlineMath math="S = \{0, 1, 2, 3, 4\}" />. Absorbing states: <InlineMath math="0" /> (ruin) and <InlineMath math="4" /> (win).</p>
+
+        <p className="mt-3"><strong className="text-indigo-300">(b)</strong> Let <InlineMath math="r_i = P(\text{ruin} \mid X_0 = i)" />. Boundary conditions: <InlineMath math="r_0 = 1" />, <InlineMath math="r_4 = 0" />.</p>
+        <p>First-step analysis gives:</p>
+        <BlockMath math="r_i = \tfrac{1}{2} r_{i-1} + \tfrac{1}{2} r_{i+1}, \quad i = 1, 2, 3" />
+        <p>This is a second-order linear recurrence. For the symmetric random walk (<InlineMath math="p = 1/2" />), the general solution is <InlineMath math="r_i = A + Bi" />.</p>
+        <p>Applying boundary conditions:</p>
+        <BlockMath math="r_0 = A = 1, \quad r_4 = 1 + 4B = 0 \implies B = -\tfrac{1}{4}" />
+        <BlockMath math="r_i = 1 - \frac{i}{4}" />
+        <p>Therefore:</p>
+        <BlockMath math="r_2 = 1 - \frac{2}{4} = \frac{1}{2}" />
+        <p>The probability of ruin starting from <InlineMath math="\$2" /> is <strong className="text-emerald-400">1/2</strong>.</p>
+      </SolutionToggle>
+    </motion.div>
+  )
+}
+
+/* ═══════════════════ EXERCISE 3.10 ═══════════════════ */
+
+function Exercise310({ onAttempt, onSolve }) {
+  const [selected, setSelected] = useState(null)
+  const [submitted, setSubmitted] = useState(false)
+  const correct = 'c'
+
+  const handleSubmit = () => {
+    if (selected) {
+      setSubmitted(true)
+      onAttempt?.()
+      if (selected === correct) onSolve?.()
+    }
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="exercise-box"
+    >
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <h3 className="text-xl font-bold text-purple-300">Exercise 3.10 &mdash; Branching Process Extinction</h3>
+        <Stars n={3} />
+      </div>
+
+      <div className="mt-4 text-slate-300 space-y-2 text-sm leading-relaxed">
+        <p>
+          In a branching process, each individual independently produces offspring according to the distribution:
+        </p>
+        <BlockMath math="P(X = 0) = 0.5, \quad P(X = 1) = 0.3, \quad P(X = 2) = 0.2" />
+        <p>
+          Starting from a single individual (<InlineMath math="Z_0 = 1" />), find the extinction probability.
+        </p>
+      </div>
+
+      <div className="mt-6 space-y-2">
+        {[
+          { value: 'a', label: '0.5' },
+          { value: 'b', label: '0.7' },
+          { value: 'c', label: '1' },
+          { value: 'd', label: '5/4' },
+        ].map(opt => {
+          let style = 'bg-slate-800/60 border-slate-700 hover:border-purple-500/50'
+          if (submitted && opt.value === correct) style = 'bg-emerald-500/15 border-emerald-500'
+          else if (submitted && opt.value === selected && opt.value !== correct) style = 'bg-red-500/15 border-red-500'
+          else if (!submitted && opt.value === selected) style = 'bg-purple-500/15 border-purple-500'
+
+          return (
+            <button
+              key={opt.value}
+              onClick={() => { if (!submitted) setSelected(opt.value) }}
+              className={`w-full text-left px-4 py-3 rounded-xl border text-sm transition-all ${style} ${submitted ? '' : 'cursor-pointer'}`}
+            >
+              <span className="text-slate-300">{opt.label}</span>
+              {submitted && opt.value === correct && <span className="ml-2 text-emerald-400">-- Correct</span>}
+              {submitted && opt.value === selected && opt.value !== correct && <span className="ml-2 text-red-400">-- Incorrect</span>}
+            </button>
+          )
+        })}
+        {!submitted && (
+          <button onClick={handleSubmit} disabled={!selected} className="btn-primary text-sm mt-2 disabled:opacity-40">
+            Submit Answer
+          </button>
+        )}
+      </div>
+
+      <HintSection
+        hints={[
+          <span key="h1">First compute the mean offspring: <InlineMath math="\mu = E[X] = 0 \cdot 0.5 + 1 \cdot 0.3 + 2 \cdot 0.2" />.</span>,
+          <span key="h2">The PGF is <InlineMath math="G(s) = 0.5 + 0.3s + 0.2s^2" />. The extinction probability is the smallest non-negative root of <InlineMath math="s = G(s)" />.</span>,
+          <span key="h3">Since <InlineMath math="\mu = 0.7 \le 1" />, recall the theorem: if <InlineMath math="\mu \le 1" />, the extinction probability is <InlineMath math="1" /> (unless <InlineMath math="P(X=1) = 1" />).</span>,
+        ]}
+      />
+
+      <SolutionToggle onReveal={() => { onAttempt?.(); if (!submitted) onSolve?.() }}>
+        <p><strong className="text-indigo-300">Step 1: Compute the mean.</strong></p>
+        <BlockMath math="\mu = E[X] = 0(0.5) + 1(0.3) + 2(0.2) = 0.7" />
+
+        <p className="mt-2"><strong className="text-indigo-300">Step 2: Since <InlineMath math="\mu = 0.7 < 1" />, the extinction probability is 1.</strong></p>
+        <p>By the fundamental theorem of branching processes, if <InlineMath math="\mu \le 1" /> and <InlineMath math="P(X = 1) < 1" />, then extinction is certain.</p>
+
+        <p className="mt-2"><strong className="text-indigo-300">Verification via PGF:</strong></p>
+        <p>The probability generating function is <InlineMath math="G(s) = 0.5 + 0.3s + 0.2s^2" />. We solve <InlineMath math="s = G(s)" />:</p>
+        <BlockMath math="s = 0.5 + 0.3s + 0.2s^2 \quad \Longrightarrow \quad 0.2s^2 - 0.7s + 0.5 = 0" />
+        <BlockMath math="s = \frac{0.7 \pm \sqrt{0.49 - 0.40}}{0.4} = \frac{0.7 \pm 0.3}{0.4}" />
+        <p>The two roots are <InlineMath math="s = 1" /> and <InlineMath math="s = 5/4" />. The smallest non-negative root is <InlineMath math="s = 1" />.</p>
+        <p className="mt-1">The extinction probability is <strong className="text-emerald-400">1</strong> (certain extinction).</p>
+      </SolutionToggle>
+    </motion.div>
+  )
+}
+
+/* ═══════════════════ EXERCISE 3.11 ═══════════════════ */
+
+function Exercise311({ onAttempt, onSolve }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="exercise-box"
+    >
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <h3 className="text-xl font-bold text-purple-300">Exercise 3.11 &mdash; State Classification</h3>
+        <Stars n={3} />
+      </div>
+
+      <div className="mt-4 text-slate-300 space-y-2 text-sm leading-relaxed">
+        <p>
+          Consider the Markov chain on <InlineMath math="S = \{1, 2, 3, 4\}" /> with transition matrix
+        </p>
+        <BlockMath math="P = \begin{pmatrix} 0 & 1 & 0 & 0 \\ 1/2 & 0 & 1/2 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 1 & 0 \end{pmatrix}" />
+        <ol className="list-decimal list-inside space-y-1 ml-2">
+          <li>Identify all communicating classes.</li>
+          <li>Classify each class as recurrent or transient.</li>
+          <li>Find the period of each recurrent class.</li>
+        </ol>
+      </div>
+
+      <HintSection
+        hints={[
+          <span key="h1">State <InlineMath math="i" /> communicates with state <InlineMath math="j" /> (written <InlineMath math="i \leftrightarrow j" />) if <InlineMath math="i" /> can reach <InlineMath math="j" /> and <InlineMath math="j" /> can reach <InlineMath math="i" />. Check which states can reach each other.</span>,
+          <span key="h2">From state 1: <InlineMath math="1 \to 2 \to 1" /> (so 1 and 2 communicate). From state 2: <InlineMath math="2 \to 3 \to 4 \to 3" />, but can 3 reach 1? Check if <InlineMath math="3 \to 4 \to 3 \to \cdots" /> ever leaves <InlineMath math="\{3,4\}" />.</span>,
+          <span key="h3">Class <InlineMath math="\{3, 4\}" /> is closed (no transitions out), hence recurrent. Class <InlineMath math="\{1, 2\}" /> can reach <InlineMath math="\{3, 4\}" /> but not return, hence transient.</span>,
+        ]}
+      />
+
+      <SolutionToggle onReveal={() => { onAttempt?.(); onSolve?.() }}>
+        <p><strong className="text-indigo-300">(a) Communicating classes:</strong></p>
+        <ul className="list-disc list-inside ml-2 space-y-1">
+          <li><InlineMath math="\{1, 2\}" />: State 1 goes to 2, and state 2 goes to 1 (with probability 1/2).</li>
+          <li><InlineMath math="\{3, 4\}" />: State 3 goes to 4, and state 4 goes to 3.</li>
+        </ul>
+        <p className="mt-1">Note: State 2 can reach state 3 (probability 1/2), but state 3 cannot reach state 1 or 2.</p>
+
+        <p className="mt-3"><strong className="text-indigo-300">(b) Classification:</strong></p>
+        <ul className="list-disc list-inside ml-2 space-y-1">
+          <li><InlineMath math="\{1, 2\}" /> is <strong className="text-red-400">transient</strong>: from state 2, the chain can leave to state 3 and never return.</li>
+          <li><InlineMath math="\{3, 4\}" /> is <strong className="text-emerald-400">recurrent</strong>: this class is closed (no transitions lead out).</li>
+        </ul>
+
+        <p className="mt-3"><strong className="text-indigo-300">(c) Period of <InlineMath math="\{3, 4\}" />:</strong></p>
+        <p>
+          State 3 returns to itself at times <InlineMath math="2, 4, 6, \ldots" /> (since <InlineMath math="3 \to 4 \to 3" />).
+          The GCD of <InlineMath math="\{2, 4, 6, \ldots\}" /> is <strong className="text-emerald-400">2</strong>,
+          so the class has period 2.
+        </p>
+      </SolutionToggle>
+    </motion.div>
+  )
+}
+
+/* ═══════════════════ EXERCISE 3.12 ═══════════════════ */
+
+function Exercise312({ onAttempt, onSolve }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="exercise-box"
+    >
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <h3 className="text-xl font-bold text-purple-300">Exercise 3.12 &mdash; Ehrenfest Model</h3>
+        <Stars n={3} />
+      </div>
+
+      <div className="mt-4 text-slate-300 space-y-2 text-sm leading-relaxed">
+        <p>
+          In the Ehrenfest model with <InlineMath math="N = 2" /> particles, each particle is independently in
+          box A or box B. At each step, one particle is chosen uniformly at random and moved to the other box.
+          Let <InlineMath math="X_n" /> be the number of particles in box A at time <InlineMath math="n" />.
+        </p>
+        <ol className="list-decimal list-inside space-y-1 ml-2">
+          <li>Write down the transition matrix <InlineMath math="P" /> on state space <InlineMath math="S = \{0, 1, 2\}" />.</li>
+          <li>Find the stationary distribution <InlineMath math="\boldsymbol{\pi}" />.</li>
+          <li>Verify that <InlineMath math="\boldsymbol{\pi}" /> is the <InlineMath math="\text{Binomial}(2, 1/2)" /> distribution.</li>
+        </ol>
+      </div>
+
+      <HintSection
+        hints={[
+          <span key="h1">When <InlineMath math="X_n = k" />, there are <InlineMath math="k" /> particles in box A. A random particle is chosen: with probability <InlineMath math="k/N" /> it is from box A (and moves to B, so <InlineMath math="X_{n+1} = k-1" />), and with probability <InlineMath math="(N-k)/N" /> it is from box B (so <InlineMath math="X_{n+1} = k+1" />).</span>,
+          <span key="h2">For <InlineMath math="N = 2" />: from state 0, go to 1 with prob 1. From state 1, go to 0 or 2 each with prob 1/2. From state 2, go to 1 with prob 1.</span>,
+          <span key="h3">Solve <InlineMath math="\boldsymbol{\pi} P = \boldsymbol{\pi}" />. You should get <InlineMath math="\pi_0 = 1/4, \pi_1 = 1/2, \pi_2 = 1/4" />, which matches <InlineMath math="\binom{2}{k}(1/2)^2" />.</span>,
+        ]}
+      />
+
+      <SolutionToggle onReveal={() => { onAttempt?.(); onSolve?.() }}>
+        <p><strong className="text-indigo-300">(a)</strong> With <InlineMath math="N = 2" />, the transition probabilities are:</p>
+        <ul className="list-disc list-inside ml-2 space-y-1">
+          <li>From state 0: both particles are in B, so the chosen particle moves to A. <InlineMath math="P(0 \to 1) = 1" />.</li>
+          <li>From state 1: with prob 1/2 the A-particle is chosen (goes to B), with prob 1/2 the B-particle is chosen (goes to A).</li>
+          <li>From state 2: both particles are in A, so the chosen particle moves to B. <InlineMath math="P(2 \to 1) = 1" />.</li>
+        </ul>
+        <BlockMath math="P = \begin{pmatrix} 0 & 1 & 0 \\ 1/2 & 0 & 1/2 \\ 0 & 1 & 0 \end{pmatrix}" />
+
+        <p className="mt-3"><strong className="text-indigo-300">(b)</strong> Solve <InlineMath math="\boldsymbol{\pi} P = \boldsymbol{\pi}" />:</p>
+        <BlockMath math="\tfrac{1}{2}\pi_1 = \pi_0, \quad \pi_0 + \pi_2 = \pi_1, \quad \tfrac{1}{2}\pi_1 = \pi_2" />
+        <p>From the first and third equations: <InlineMath math="\pi_0 = \pi_2 = \frac{1}{2}\pi_1" />. Using <InlineMath math="\pi_0 + \pi_1 + \pi_2 = 1" />:</p>
+        <BlockMath math="\tfrac{1}{2}\pi_1 + \pi_1 + \tfrac{1}{2}\pi_1 = 1 \implies 2\pi_1 = 1 \implies \pi_1 = \tfrac{1}{2}" />
+        <BlockMath math="\boldsymbol{\pi} = \left(\tfrac{1}{4},\; \tfrac{1}{2},\; \tfrac{1}{4}\right)" />
+
+        <p className="mt-3"><strong className="text-indigo-300">(c)</strong> The <InlineMath math="\text{Binomial}(2, 1/2)" /> distribution gives:</p>
+        <BlockMath math="P(X = k) = \binom{2}{k}\left(\tfrac{1}{2}\right)^2 = \begin{cases} 1/4 & k = 0 \\ 1/2 & k = 1 \\ 1/4 & k = 2 \end{cases}" />
+        <p>
+          This matches <InlineMath math="\boldsymbol{\pi}" /> exactly, confirming that the stationary distribution
+          of the Ehrenfest model with <InlineMath math="N = 2" /> is <strong className="text-emerald-400"><InlineMath math="\text{Binomial}(2, 1/2)" /></strong>.
+        </p>
+      </SolutionToggle>
+    </motion.div>
+  )
+}
+
 /* ═══════════════════ MAIN PAGE ═══════════════════ */
 
 export default function Exercises() {
@@ -863,12 +1436,12 @@ export default function Exercises() {
         <div className="flex items-center gap-6">
           <div>
             <span className="text-slate-400 text-sm">Attempted</span>
-            <p className="text-2xl font-bold text-purple-400">{attempted.size}<span className="text-slate-500 text-lg">/4</span></p>
+            <p className="text-2xl font-bold text-purple-400">{attempted.size}<span className="text-slate-500 text-lg">/12</span></p>
           </div>
           <div className="w-px h-10 bg-slate-700" />
           <div>
             <span className="text-slate-400 text-sm">Solved</span>
-            <p className="text-2xl font-bold text-emerald-400">{solved.size}<span className="text-slate-500 text-lg">/4</span></p>
+            <p className="text-2xl font-bold text-emerald-400">{solved.size}<span className="text-slate-500 text-lg">/12</span></p>
           </div>
         </div>
 
@@ -878,11 +1451,11 @@ export default function Exercises() {
             <motion.div
               className="h-full bg-gradient-to-r from-purple-500 to-emerald-500 rounded-full"
               initial={{ width: 0 }}
-              animate={{ width: `${(solved.size / 4) * 100}%` }}
+              animate={{ width: `${(solved.size / 12) * 100}%` }}
               transition={{ duration: 0.5 }}
             />
           </div>
-          <p className="text-xs text-slate-500 mt-1 text-right">{Math.round((solved.size / 4) * 100)}% complete</p>
+          <p className="text-xs text-slate-500 mt-1 text-right">{Math.round((solved.size / 12) * 100)}% complete</p>
         </div>
       </motion.div>
 
@@ -903,16 +1476,51 @@ export default function Exercises() {
         onAttempt={() => markAttempted('3.4')}
         onSolve={() => markSolved('3.4')}
       />
+      <Exercise35
+        onAttempt={() => markAttempted('3.5')}
+        onSolve={() => markSolved('3.5')}
+      />
+      <Exercise36
+        onAttempt={() => markAttempted('3.6')}
+        onSolve={() => markSolved('3.6')}
+      />
+      <Exercise37
+        onAttempt={() => markAttempted('3.7')}
+        onSolve={() => markSolved('3.7')}
+      />
+      <Exercise38
+        onAttempt={() => markAttempted('3.8')}
+        onSolve={() => markSolved('3.8')}
+      />
+      <Exercise39
+        onAttempt={() => markAttempted('3.9')}
+        onSolve={() => markSolved('3.9')}
+      />
+      <Exercise310
+        onAttempt={() => markAttempted('3.10')}
+        onSolve={() => markSolved('3.10')}
+      />
+      <Exercise311
+        onAttempt={() => markAttempted('3.11')}
+        onSolve={() => markSolved('3.11')}
+      />
+      <Exercise312
+        onAttempt={() => markAttempted('3.12')}
+        onSolve={() => markSolved('3.12')}
+      />
 
       {/* Footer note */}
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        className="text-center py-6"
+        className="text-center py-6 space-y-2"
       >
         <p className="text-slate-500 text-sm">
-          These exercises cover key ideas from Chapter 3: state spaces, the Markov property, and its implications.
+          These exercises cover key ideas from Chapter 3: state spaces, the Markov property, transition probabilities, stationary distributions, and state classification.
+        </p>
+        <p className="text-slate-400 text-sm italic">
+          For more practice, see the <strong>First Step Analysis</strong> and <strong>Branching Processes</strong> chapters.
         </p>
       </motion.div>
     </div>

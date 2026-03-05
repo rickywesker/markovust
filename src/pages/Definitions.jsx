@@ -613,6 +613,16 @@ export default function Definitions() {
             Click the button to see how the past becomes irrelevant once we know the present:
           </p>
           <MarkovPropertyDemo />
+
+          {/* Things to Try */}
+          <div className="mt-6 p-4 rounded-xl border border-teal-500/30 bg-teal-500/5">
+            <h4 className="text-teal-400 font-semibold mb-2">Things to Try</h4>
+            <ul className="list-disc list-inside space-y-1 text-slate-300 text-sm">
+              <li>Click &quot;Show Markov Property&quot; and notice how the past dims. The key insight: knowing the present state tells you everything about the future.</li>
+              <li>Think of a real-life example: if you know today&apos;s weather, does knowing last week&apos;s weather help predict tomorrow?</li>
+              <li>Caution: &quot;conditionally independent&quot; is not the same as &quot;independent.&quot; Can you think of why?</li>
+            </ul>
+          </div>
         </div>
       </FadeIn>
 
@@ -684,6 +694,14 @@ export default function Definitions() {
               </motion.div>
             </div>
           </div>
+
+          {/* Things to Try */}
+          <div className="mt-6 p-4 rounded-xl border border-teal-500/30 bg-teal-500/5">
+            <h4 className="text-teal-400 font-semibold mb-2">Things to Try</h4>
+            <ul className="list-disc list-inside space-y-1 text-slate-300 text-sm">
+              <li>Which examples have discrete state space? Which have continuous? Does time domain always match state space type?</li>
+            </ul>
+          </div>
         </div>
       </FadeIn>
 
@@ -715,6 +733,21 @@ export default function Definitions() {
           </div>
         </div>
       </FadeIn>
+
+      {/* Key Takeaways */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="mt-12 p-6 rounded-2xl border border-amber-500/30 bg-amber-500/5"
+      >
+        <h3 className="text-xl font-bold text-amber-400 mb-3">Key Takeaways</h3>
+        <ul className="space-y-2 text-slate-300">
+          <li>The <strong>Markov property</strong>: the future depends only on the present state, not on how you got there.</li>
+          <li><em>Conditionally independent</em> given the present is <strong>not</strong> the same as independent -- the past and future can still be correlated.</li>
+          <li>Discrete time + discrete (countable) state space = <strong>Markov chain</strong>. This is our focus throughout the chapter.</li>
+        </ul>
+      </motion.div>
     </div>
   )
 }

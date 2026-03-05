@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useLocation, Link } from 'react-router-dom'
 import { useState } from 'react'
 
 const navItems = [
@@ -7,8 +7,38 @@ const navItems = [
   { path: '/definitions', label: '3.2 Definitions' },
   { path: '/transition', label: '3.3 Transition Prob.' },
   { path: '/more-examples', label: '3.4 More Examples' },
+  { path: '/first-step', label: '3.5 First Step' },
+  { path: '/branching', label: '3.6 Branching' },
+  { path: '/regular-mc', label: '4.1-4.2 Regular MC' },
+  { path: '/classification', label: '4.3-4.4 Classification' },
   { path: '/exercises', label: 'Exercises' },
 ]
+
+function PrevNextNav() {
+  const { pathname } = useLocation()
+  const idx = navItems.findIndex(item => item.path === pathname)
+  const prev = idx > 0 ? navItems[idx - 1] : null
+  const next = idx < navItems.length - 1 ? navItems[idx + 1] : null
+
+  if (!prev && !next) return null
+
+  return (
+    <div className="flex justify-between items-center mt-12 pt-6 border-t border-slate-800">
+      {prev ? (
+        <Link to={prev.path} className="flex items-center gap-2 text-slate-400 hover:text-indigo-400 transition-colors">
+          <span className="text-lg">&larr;</span>
+          <span className="text-sm">Previous: {prev.label}</span>
+        </Link>
+      ) : <span />}
+      {next ? (
+        <Link to={next.path} className="flex items-center gap-2 text-slate-400 hover:text-indigo-400 transition-colors">
+          <span className="text-sm">Next: {next.label}</span>
+          <span className="text-lg">&rarr;</span>
+        </Link>
+      ) : <span />}
+    </div>
+  )
+}
 
 export default function Layout() {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -20,9 +50,9 @@ export default function Layout() {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-2">
               <span className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-                Chapter 3
+                Markov Chains
               </span>
-              <span className="text-sm text-slate-400 hidden sm:inline">Markov Chain: Introduction</span>
+              <span className="text-sm text-slate-400 hidden sm:inline">Chapters 3 & 4</span>
             </div>
             <button
               onClick={() => setMenuOpen(!menuOpen)}
@@ -67,9 +97,10 @@ export default function Layout() {
       </nav>
       <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
         <Outlet />
+        <PrevNextNav />
       </main>
       <footer className="border-t border-slate-800 py-6 text-center text-sm text-slate-500">
-        MATH 3425 - Stochastic Processes | Chapter 3: Markov Chain Introduction
+        MATH 3425 - Stochastic Processes | Chapters 3 & 4: Markov Chains
       </footer>
     </div>
   )

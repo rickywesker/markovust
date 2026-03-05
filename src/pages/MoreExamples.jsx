@@ -1571,12 +1571,39 @@ export default function MoreExamples() {
           probability, and everyday life. The first two are from the textbook; the
           bonus examples illustrate additional applications.
         </p>
+        <div className="flex gap-3 flex-wrap mt-4">
+          <a href="#inventory" className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-sm text-blue-400 transition-colors">Inventory Model</a>
+          <a href="#ehrenfest" className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-sm text-blue-400 transition-colors">Ehrenfest Model</a>
+          <a href="#gamblers-ruin" className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-sm text-blue-400 transition-colors">Gambler's Ruin</a>
+          <a href="#weather" className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-sm text-blue-400 transition-colors">Weather Model</a>
+        </div>
       </motion.div>
 
-      <InventoryModel />
-      <EhrenfestModel />
-      <GamblersRuin />
-      <WeatherModel />
+      <div id="inventory"><InventoryModel /></div>
+
+      {/* Things to Try: Inventory */}
+      <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="p-5 rounded-xl border border-teal-500/30 bg-teal-500/5">
+        <h4 className="text-teal-400 font-bold mb-3 flex items-center gap-2">Things to Try</h4>
+        <ul className="text-slate-300 space-y-2 list-disc list-inside">
+          <li>Run the simulation for 100 days. How often is the store in backorder (state -1)?</li>
+          <li>Watch the transition matrix row for state 2. With 2 TVs in stock, what's the probability of backorder tomorrow?</li>
+        </ul>
+      </motion.div>
+
+      <div id="ehrenfest"><EhrenfestModel /></div>
+
+      {/* Things to Try: Ehrenfest */}
+      <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="p-5 rounded-xl border border-teal-500/30 bg-teal-500/5">
+        <h4 className="text-teal-400 font-bold mb-3 flex items-center gap-2">Things to Try</h4>
+        <ul className="text-slate-300 space-y-2 list-disc list-inside">
+          <li>Set N=2 (4 particles). Run until equilibrium. Is the most likely state N=2 (equal split)?</li>
+          <li>Try N=10 (20 particles). How does the time to equilibrium compare with N=2?</li>
+          <li>The stationary distribution is Binomial(2N, 1/2). Can you see this in the histogram?</li>
+        </ul>
+      </motion.div>
+
+      <div id="gamblers-ruin"><GamblersRuin /></div>
+      <div id="weather"><WeatherModel /></div>
 
       {/* summary card */}
       <motion.div
@@ -1585,7 +1612,7 @@ export default function MoreExamples() {
         transition={{ duration: 0.5, delay: 0.3 }}
         className="section-card"
       >
-        <h3 className="text-lg font-bold text-slate-200 mb-3">Key Takeaways</h3>
+        <h3 className="text-lg font-bold text-amber-400 mb-3">Key Takeaways</h3>
         <ul className="text-slate-300 leading-relaxed space-y-2 list-disc list-inside">
           <li>
             The <strong>inventory model</strong> shows how Markov chains arise in operations

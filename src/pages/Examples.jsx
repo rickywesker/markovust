@@ -292,6 +292,16 @@ function CoinTossing() {
           style={{ height: 220 }}
         />
       </div>
+
+      {/* Things to Try */}
+      <div className="mt-6 p-4 rounded-xl border border-teal-500/30 bg-teal-500/5">
+        <h4 className="text-teal-400 font-semibold mb-2">Things to Try</h4>
+        <ul className="list-disc list-inside space-y-1 text-slate-300 text-sm">
+          <li>Set p=0.5 and run 200 steps. How close is the actual proportion to 0.5?</li>
+          <li>Now try p=0.1. Does the chart look different? Why?</li>
+          <li>Compare p=0.3 with p=0.7. What symmetry do you notice?</li>
+        </ul>
+      </div>
     </motion.div>
   )
 }
@@ -684,6 +694,16 @@ function MickeyMaze() {
           </div>
         </div>
       )}
+
+      {/* Things to Try */}
+      <div className="mt-6 p-4 rounded-xl border border-teal-500/30 bg-teal-500/5">
+        <h4 className="text-teal-400 font-semibold mb-2">Things to Try</h4>
+        <ul className="list-disc list-inside space-y-1 text-slate-300 text-sm">
+          <li>Run the simulation for 500+ steps. Which cell is visited most often? Why?</li>
+          <li>Does Mickey visit corner cells (0, 2, 6, 8) or center cell (4) more? Count their neighbors.</li>
+          <li>Reset and run again. Do you get similar visit frequencies? This is the law of large numbers at work.</li>
+        </ul>
+      </div>
     </motion.div>
   )
 }
@@ -713,20 +733,20 @@ export default function Examples() {
       <CoinTossing />
       <MickeyMaze />
 
-      {/* summary card */}
+      {/* Key Takeaways */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
-        className="section-card"
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="mt-12 p-6 rounded-2xl border border-amber-500/30 bg-amber-500/5"
       >
-        <h3 className="text-lg font-bold text-slate-200 mb-3">Key Takeaway</h3>
-        <p className="text-slate-300 leading-relaxed">
-          In both examples the future state depends on the past <em>only</em> through
-          the present state. This <strong>memoryless property</strong> — formally, the{' '}
-          <em>Markov property</em> — is what makes a stochastic process a{' '}
-          <strong>Markov chain</strong>. In Section 3.2 we will give precise definitions.
-        </p>
+        <h3 className="text-xl font-bold text-amber-400 mb-3">Key Takeaways</h3>
+        <ul className="space-y-2 text-slate-300">
+          <li>Markov chains arise naturally from real-world scenarios -- coin tossing and random walks are just the beginning.</li>
+          <li>Coin tossing produces a Markov chain with an infinite (countable) state space: the head count can grow without bound.</li>
+          <li>Mickey in the maze produces a Markov chain with a finite state space of 9 rooms.</li>
+          <li>The key property in both examples: the future depends on the past <em>only</em> through the present state -- the <strong>Markov property</strong>.</li>
+        </ul>
       </motion.div>
     </div>
   )

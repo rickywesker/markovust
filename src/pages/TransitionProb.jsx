@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { InlineMath, BlockMath } from '../utils/MathRenderer'
+import { matMul, matPow, identity, heatColor } from '../utils/matrix'
 
 /* ─── Mickey-in-Maze 9x9 transition matrix ─── */
 const MICKEY_P = [
@@ -15,30 +16,6 @@ const MICKEY_P = [
   [0, 0, 0, 0, 0, 1/2, 0, 1/2, 0],
 ]
 
-/* ─── Matrix utilities ─── */
-function matMul(A, B) {
-  const n = A.length
-  const C = Array.from({ length: n }, () => Array(n).fill(0))
-  for (let i = 0; i < n; i++)
-    for (let j = 0; j < n; j++)
-      for (let l = 0; l < n; l++)
-        C[i][j] += A[i][l] * B[l][j]
-  return C
-}
-
-function identity(n) {
-  return Array.from({ length: n }, (_, i) =>
-    Array.from({ length: n }, (_, j) => (i === j ? 1 : 0))
-  )
-}
-
-function matPow(M, k) {
-  if (k === 0) return identity(M.length)
-  let result = M
-  for (let i = 1; i < k; i++) result = matMul(result, M)
-  return result
-}
-
 /* ─── Unicode superscript helper ─── */
 const SUPERSCRIPT_DIGITS = {
   '0': '\u2070', '1': '\u00B9', '2': '\u00B2', '3': '\u00B3',
@@ -47,17 +24,6 @@ const SUPERSCRIPT_DIGITS = {
 }
 function toSuperscript(n) {
   return String(n).split('').map(d => SUPERSCRIPT_DIGITS[d] || d).join('')
-}
-
-/* ─── Colour helpers ─── */
-function heatColor(v) {
-  if (v === 0) return 'rgba(99,102,241,0.05)'
-  const t = Math.min(Math.abs(v), 1)
-  const r = Math.round(99 + 66 * t)
-  const g = Math.round(102 + 39 * t)
-  const b = 241
-  const a = 0.15 + 0.85 * t
-  return `rgba(${r},${g},${b},${a})`
 }
 
 /* ─── Fraction display for table cells ─── */
@@ -394,6 +360,16 @@ export default function TransitionProb() {
           <strong>Row sums = 1:</strong> Every row sums to exactly 1, confirming that the probability of
           transitioning somewhere (including staying) from each state totals 1.
         </div>
+
+        {/* Things to Try */}
+        <div className="mt-6 p-4 rounded-xl border border-teal-500/30 bg-teal-500/5">
+          <h4 className="text-teal-400 font-semibold mb-2">Things to Try</h4>
+          <ul className="list-disc list-inside space-y-1 text-slate-300 text-sm">
+            <li>Hover over row 5 (center cell). It has 4 neighbors -- notice the 4 non-zero entries, each = 1/4.</li>
+            <li>Hover over row 1 (corner cell). How many neighbors does it have? Do the probabilities match?</li>
+            <li>Check: does every row sum to exactly 1? Why must this be true?</li>
+          </ul>
+        </div>
       </Section>
 
       {/* ── 3. k-Step Transition Probability ── */}
@@ -487,6 +463,16 @@ export default function TransitionProb() {
             )}
           </motion.div>
         </AnimatePresence>
+
+        {/* Things to Try */}
+        <div className="mt-6 p-4 rounded-xl border border-teal-500/30 bg-teal-500/5">
+          <h4 className="text-teal-400 font-semibold mb-2">Things to Try</h4>
+          <ul className="list-disc list-inside space-y-1 text-slate-300 text-sm">
+            <li>Click through P{'\u00B9'}, P{'\u00B2'}, ..., P{'\u00B9\u2070'}. Watch how the matrix changes from sparse to dense.</li>
+            <li>At P{'\u2075\u2070'}, all rows look nearly identical. This is the stationary distribution!</li>
+            <li>Try to find the smallest k where all rows are approximately equal.</li>
+          </ul>
+        </div>
       </Section>
 
       {/* ── 5. Example 3.3 Walkthrough ── */}
@@ -495,6 +481,11 @@ export default function TransitionProb() {
           Using the Mickey maze matrix, we compute two 3-step transition probabilities by hand
           via the Chapman-Kolmogorov equations.
         </p>
+
+        <div className="p-3 mb-4 bg-slate-800/50 border border-slate-700/60 rounded-xl text-sm text-slate-400">
+          <strong className="text-slate-300">Note:</strong> In this example the textbook labels cells 1--9. In the matrix above,
+          row <em>i</em> and column <em>j</em> correspond to cell <em>i</em> and cell <em>j</em> respectively.
+        </div>
 
         <button
           onClick={() => setShowExample(!showExample)}
@@ -630,34 +621,30 @@ export default function TransitionProb() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Things to Try */}
+        <div className="mt-6 p-4 rounded-xl border border-teal-500/30 bg-teal-500/5">
+          <h4 className="text-teal-400 font-semibold mb-2">Things to Try</h4>
+          <ul className="list-disc list-inside space-y-1 text-slate-300 text-sm">
+            <li>Show the detailed computation and trace each step. Can you verify the result by checking the matrix power calculator above?</li>
+            <li>Why is it impossible to go from state 4 to state 8 in exactly 3 steps? Think about the parity of the maze grid.</li>
+          </ul>
+        </div>
       </Section>
 
       {/* ── Key Takeaways ── */}
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-        className="section-card bg-gradient-to-br from-indigo-950/50 to-purple-950/50"
+        className="mt-12 p-6 rounded-2xl border border-amber-500/30 bg-amber-500/5"
       >
-        <h2 className="text-xl font-bold mb-4 text-slate-200">Key Takeaways</h2>
+        <h3 className="text-xl font-bold text-amber-400 mb-3">Key Takeaways</h3>
         <ul className="space-y-2 text-slate-300">
-          <li className="flex items-start gap-2">
-            <span className="text-indigo-400 mt-1">--</span>
-            The transition matrix <InlineMath math="P" /> encodes all one-step movement probabilities; each row sums to 1.
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-indigo-400 mt-1">--</span>
-            The <InlineMath math="k" />-step transition matrix equals the <InlineMath math="k" />-th matrix power: <InlineMath math="P^{(k)} = P^k" />.
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-indigo-400 mt-1">--</span>
-            Chapman-Kolmogorov: break any multi-step path into two sub-paths and sum over intermediate states.
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-indigo-400 mt-1">--</span>
-            As <InlineMath math="k \to \infty" />, rows of <InlineMath math="P^k" /> often converge to a common stationary distribution.
-          </li>
+          <li><InlineMath math="P_{ij}" /> is the one-step transition probability from state <InlineMath math="i" /> to state <InlineMath math="j" />.</li>
+          <li>Every row of the transition matrix sums to 1 -- probabilities of leaving any state must total 1.</li>
+          <li>The <InlineMath math="n" />-step transition matrix equals the <InlineMath math="n" />-th matrix power: <InlineMath math="P^{(n)} = P^n" /> (Chapman-Kolmogorov).</li>
+          <li>Matrix powers reveal long-term behavior: as <InlineMath math="n \to \infty" />, rows of <InlineMath math="P^n" /> often converge to a common stationary distribution.</li>
         </ul>
       </motion.div>
     </div>
