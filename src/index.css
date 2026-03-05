@@ -15,15 +15,6 @@
   .math-block {
     @apply bg-slate-800/50 border border-slate-700 rounded-xl p-6 my-4 overflow-x-auto;
   }
-  .nav-link {
-    @apply px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200;
-  }
-  .nav-link:hover {
-    @apply bg-slate-800 text-white;
-  }
-  .nav-link.active {
-    @apply bg-indigo-600 text-white;
-  }
   .btn-primary {
     @apply px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-medium transition-all duration-200 shadow-lg shadow-indigo-500/25 cursor-pointer;
   }
