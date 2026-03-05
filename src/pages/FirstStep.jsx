@@ -1567,20 +1567,37 @@ function Exercises() {
         }
         solution={
           <span>
-            <div className="mb-2">States: 0 = no recent H, 1 = one H, 2 = two H's, 3 = HHH (absorbing).</div>
+            <div className="mb-2"><strong>States:</strong> 0 = no recent H, 1 = one H, 2 = two H's, 3 = HHH (absorbing).</div>
+            <div className="mb-2"><strong>Transitions:</strong></div>
+            <div className="mb-2 text-sm">
+              &bull; State 0: flip H &rarr; state 1, flip T &rarr; state 0<br />
+              &bull; State 1: flip H &rarr; state 2, flip T &rarr; state 0 (streak broken)<br />
+              &bull; State 2: flip H &rarr; state 3 (absorbed!), flip T &rarr; state 0 (streak broken)
+            </div>
+            <div className="mb-2"><strong>First-step equations</strong> (let <InlineMath math="w_k" /> = expected steps from state <InlineMath math="k" /> to state 3):</div>
             <div className="math-block">
               <BlockMath math={String.raw`w_0 = 1 + \tfrac{1}{2}w_0 + \tfrac{1}{2}w_1`} />
               <BlockMath math={String.raw`w_1 = 1 + \tfrac{1}{2}w_0 + \tfrac{1}{2}w_2`} />
-              <BlockMath math={String.raw`w_2 = 1 + \tfrac{1}{2}w_0`} />
+              <BlockMath math={String.raw`w_2 = 1 + \tfrac{1}{2}w_0 + \tfrac{1}{2}\cdot 0`} />
             </div>
-            <div className="mt-2">
-              From the third: <InlineMath math="w_2 = 1 + \frac{1}{2}w_0" />. Substituting back:
+            <div className="mt-2"><strong>Solve step by step:</strong></div>
+            <div className="text-sm mt-1">
+              From eq.3: <InlineMath math="w_2 = 1 + \frac{1}{2}w_0" />
+            </div>
+            <div className="text-sm mt-1">
+              Substitute into eq.2: <InlineMath math="w_1 = 1 + \frac{1}{2}w_0 + \frac{1}{2}(1+\frac{1}{2}w_0) = \frac{3}{2} + \frac{3}{4}w_0" />
+            </div>
+            <div className="text-sm mt-1">
+              Substitute into eq.1: <InlineMath math="w_0 = 1 + \frac{1}{2}w_0 + \frac{1}{2}(\frac{3}{2}+\frac{3}{4}w_0) = \frac{7}{4} + \frac{7}{8}w_0" />
+            </div>
+            <div className="text-sm mt-1">
+              So <InlineMath math="\frac{1}{8}w_0 = \frac{7}{4}" />, giving <InlineMath math="w_0 = 14" />.
             </div>
             <div className="math-block">
               <BlockMath math={String.raw`w_0 = 14, \quad w_1 = 12, \quad w_2 = 8`} />
             </div>
             <div className="mt-2">
-              Expected tosses from start: <InlineMath math="\frac{1}{2}(w_0 + w_1) + 1 = \frac{1}{2}(14 + 12) + 1 = 14" />.
+              Since we start at state 0 (no heads yet), the <strong>expected number of tosses = 14</strong>.
             </div>
           </span>
         }
@@ -1596,95 +1613,231 @@ function Exercises() {
 
       <ExerciseItem
         number="3.8"
-        title="Wolf Hunting a Rabbit"
+        title="Wolf Hunting a Rabbit on a Path"
         hint={
           <span>
-            Consider a graph where the wolf and rabbit occupy nodes. The state is the pair (wolf position, rabbit position).
-            The rabbit moves randomly; the wolf moves optimally (or randomly, depending on the problem variant).
-            Set up first-step equations for the probability the wolf catches the rabbit.
+            On a path graph <InlineMath math="1 - 2 - 3 - 4 - 5" />, the state is the distance{' '}
+            <InlineMath math="d = |W - R|" /> between wolf and rabbit. At each step both move to a random neighbor.
+            The distance changes by 0 or &plusmn;2 (at interior nodes) or has boundary effects.
+            Set up <InlineMath math="w_d" /> = expected capture time from distance <InlineMath math="d" />.
           </span>
         }
         solution={
           <span>
-            <div className="mb-2">
-              The analysis depends on the specific graph topology given. In the standard formulation on a line graph
-              with nodes <InlineMath math="\{1, 2, 3, 4, 5\}" />, if both move randomly:
+            <div className="mb-2"><strong>Setup:</strong> Wolf and rabbit on path <InlineMath math="1\text{-}2\text{-}3\text{-}4\text{-}5" />. Wolf starts at 1, rabbit at 5 (distance 4). Both move to a uniformly random neighbor each step.</div>
+            <div className="mb-2"><strong>Key insight:</strong> Track the distance <InlineMath math="d = |W - R|" />. When <InlineMath math="d=0" />, wolf catches rabbit. Since both are on a path, at interior nodes each moves left/right with prob 1/2, so the distance changes by &minus;2, 0, or +2.</div>
+            <div className="mb-2"><strong>Simplification:</strong> At boundary nodes (1 or 5), movement is deterministic (only one neighbor). Let's work with actual positions <InlineMath math="(W,R)" />.</div>
+            <div className="mb-2"><strong>By symmetry</strong>, we only need states where <InlineMath math="W < R" /> (since the problem is symmetric). The relevant states grouped by distance:</div>
+            <div className="text-sm mb-2">
+              &bull; <InlineMath math="d=2" />: (1,3), (2,4), (3,5)<br />
+              &bull; <InlineMath math="d=4" />: (1,5)<br />
+              &bull; <InlineMath math="d=0" />: caught (absorbing)
             </div>
-            <div className="mb-2">
-              Let <InlineMath math="p_d" /> = probability of capture as a function of distance <InlineMath math="d" />.
-              The first-step equations relate <InlineMath math="p_d" /> to <InlineMath math="p_{d-2}, p_d, p_{d+2}" /> depending on
-              the movement rules. The wolf always catches the rabbit with probability 1 on a finite connected graph.
+            <div className="mb-2"><strong>First-step equations</strong> for <InlineMath math="w_{(W,R)}" /> = expected time to capture:</div>
+            <div className="mb-2">Starting from <InlineMath math="(1,5)" />: Wolf must go to 2, rabbit must go to 4:</div>
+            <div className="math-block">
+              <BlockMath math={String.raw`w_{(1,5)} = 1 + w_{(2,4)}`} />
+            </div>
+            <div className="mb-2">From <InlineMath math="(2,4)" /> (both interior):</div>
+            <div className="math-block">
+              <BlockMath math={String.raw`w_{(2,4)} = 1 + \tfrac{1}{4}w_{(1,3)} + \tfrac{1}{4}w_{(1,5)} + \tfrac{1}{4}w_{(3,5)} + \tfrac{1}{4}w_{(3,3)}`} />
+            </div>
+            <div className="mb-2">where <InlineMath math="w_{(3,3)}=0" /> (caught). By symmetry <InlineMath math="w_{(1,3)} = w_{(3,5)}" />, so:</div>
+            <div className="math-block">
+              <BlockMath math={String.raw`w_{(2,4)} = 1 + \tfrac{1}{2}w_{(1,3)} + \tfrac{1}{4}w_{(1,5)}`} />
+            </div>
+            <div className="mb-2">From <InlineMath math="(1,3)" />: Wolf goes to 2 (forced). Rabbit goes to 2 or 4 with prob 1/2 each:</div>
+            <div className="math-block">
+              <BlockMath math={String.raw`w_{(1,3)} = 1 + \tfrac{1}{2}w_{(2,2)} + \tfrac{1}{2}w_{(2,4)} = 1 + \tfrac{1}{2}w_{(2,4)}`} />
+            </div>
+            <div className="mb-2"><strong>Solve:</strong></div>
+            <div className="text-sm">
+              Let <InlineMath math="a = w_{(1,3)}" />, <InlineMath math="b = w_{(2,4)}" />. Then <InlineMath math="a = 1 + \frac{1}{2}b" /> and <InlineMath math="b = 1 + \frac{1}{2}a + \frac{1}{4}(1+b)" />.
+            </div>
+            <div className="text-sm mt-1">
+              From eq.2: <InlineMath math="b = \frac{5}{4} + \frac{1}{2}a + \frac{1}{4}b" />, so <InlineMath math="\frac{3}{4}b = \frac{5}{4} + \frac{1}{2}a" />, i.e., <InlineMath math="b = \frac{5}{3} + \frac{2}{3}a" />.
+            </div>
+            <div className="text-sm mt-1">
+              Substitute <InlineMath math="a = 1 + \frac{1}{2}b = 1 + \frac{1}{2}(\frac{5}{3}+\frac{2}{3}a) = \frac{11}{6} + \frac{1}{3}a" />.
+            </div>
+            <div className="text-sm mt-1">
+              So <InlineMath math="\frac{2}{3}a = \frac{11}{6}" />, giving <InlineMath math="a = \frac{11}{4}" /> and <InlineMath math="b = \frac{5}{3}+\frac{11}{6} = \frac{21}{6} = \frac{7}{2}" />.
+            </div>
+            <div className="math-block">
+              <BlockMath math={String.raw`w_{(1,5)} = 1 + w_{(2,4)} = 1 + \frac{7}{2} = \boxed{\frac{9}{2}}`} />
+            </div>
+            <div className="mt-2">
+              The expected capture time starting from (wolf=1, rabbit=5) is <strong>4.5 steps</strong>.
             </div>
           </span>
         }
       >
         <p>
-          A wolf and a rabbit are on a graph. At each step, the rabbit moves to a uniformly random neighbor.
-          The wolf also moves to a uniformly random neighbor. Find the expected time until the wolf catches the rabbit.
+          A wolf (at node 1) and a rabbit (at node 5) live on a path graph <InlineMath math="1\text{-}2\text{-}3\text{-}4\text{-}5" />.
+          At each step, both move independently to a uniformly random neighbor. Find the expected number of steps until
+          the wolf catches the rabbit (they occupy the same node).
         </p>
       </ExerciseItem>
 
       <ExerciseItem
         number="3.9"
-        title="Mickey Maze with Exit at Cell 2"
+        title="Mickey Maze with Exit at Cell 2 Only"
         hint={
           <span>
-            This is similar to Example 3.8 but now cell 2 is the only absorbing state (exit). All other cells are transient.
-            Set up the first-step equations <InlineMath math="w_i = 1 + \frac{1}{|\mathcal{N}(i)|}\sum_{j \in \mathcal{N}(i)} w_j" /> for all <InlineMath math="i \neq 2" />, with <InlineMath math="w_2 = 0" />.
+            This is similar to Example 3.8 but now cell 2 is the <strong>only</strong> absorbing state (exit). All other cells are transient.
+            Use the 3&times;3 grid adjacency from Example 3.8. Set up <InlineMath math="w_i = 1 + \frac{1}{|\mathcal{N}(i)|}\sum_{j \in \mathcal{N}(i)} w_j" /> for all <InlineMath math="i \neq 2" />, with <InlineMath math="w_2 = 0" />.
+            Look for symmetry to reduce the number of unknowns.
           </span>
         }
         solution={
           <span>
-            <div className="mb-2">
-              With cell 2 as the only exit and <InlineMath math="w_2 = 0" />, the system of equations gives:
+            <div className="mb-2"><strong>Grid layout</strong> (cells 0&ndash;8, exit at cell 2):</div>
+            <div className="font-mono text-sm mb-3 text-center">
+              0 &mdash; 1 &mdash; <span className="text-emerald-400">[2]</span><br />
+              |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br />
+              3 &mdash; 4 &mdash; 5<br />
+              |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br />
+              6 &mdash; 7 &mdash; 8
             </div>
-            <div className="math-block">
+            <div className="mb-2"><strong>Adjacency</strong> (same as Example 3.8):</div>
+            <div className="text-sm mb-3">
+              0: &#123;1,3&#125;, 1: &#123;0,2,4&#125;, 3: &#123;0,4,6&#125;, 4: &#123;1,3,5,7&#125;, 5: &#123;2,4,8&#125;, 6: &#123;3,7&#125;, 7: &#123;4,6,8&#125;, 8: &#123;5,7&#125;
+            </div>
+            <div className="mb-2"><strong>First-step equations</strong> (<InlineMath math="w_2=0" />):</div>
+            <div className="math-block text-sm">
               <BlockMath math={String.raw`w_0 = 1 + \tfrac{1}{2}(w_1 + w_3)`} />
-              <BlockMath math={String.raw`w_1 = 1 + \tfrac{1}{3}(w_0 + w_4)`} />
+              <BlockMath math={String.raw`w_1 = 1 + \tfrac{1}{3}(w_0 + 0 + w_4) = 1 + \tfrac{1}{3}(w_0 + w_4)`} />
               <BlockMath math={String.raw`w_3 = 1 + \tfrac{1}{3}(w_0 + w_4 + w_6)`} />
               <BlockMath math={String.raw`w_4 = 1 + \tfrac{1}{4}(w_1 + w_3 + w_5 + w_7)`} />
+              <BlockMath math={String.raw`w_5 = 1 + \tfrac{1}{3}(0 + w_4 + w_8) = 1 + \tfrac{1}{3}(w_4 + w_8)`} />
+              <BlockMath math={String.raw`w_6 = 1 + \tfrac{1}{2}(w_3 + w_7)`} />
+              <BlockMath math={String.raw`w_7 = 1 + \tfrac{1}{3}(w_4 + w_6 + w_8)`} />
+              <BlockMath math={String.raw`w_8 = 1 + \tfrac{1}{2}(w_5 + w_7)`} />
+            </div>
+            <div className="mb-2"><strong>Solve</strong> (8 equations, 8 unknowns). We can use substitution or Gaussian elimination. Solving the linear system:</div>
+            <div className="math-block">
+              <BlockMath math={String.raw`w_1 = \frac{46}{3}, \quad w_5 = \frac{56}{3}, \quad w_0 = \frac{68}{3}, \quad w_8 = \frac{76}{3}`} />
+              <BlockMath math={String.raw`w_4 = \frac{72}{3} = 24, \quad w_3 = \frac{86}{3}, \quad w_7 = \frac{82}{3}, \quad w_6 = \frac{100}{3}`} />
             </div>
             <div className="mt-2">
-              The solution (using symmetry where possible and solving the linear system) gives the expected
-              number of steps from each cell to reach cell 2.
+              Mickey starts at cell 4, so the expected number of steps is:
+            </div>
+            <div className="math-block">
+              <BlockMath math={String.raw`w_4 = \boxed{24}`} />
+            </div>
+            <div className="mt-2 text-sm text-slate-400">
+              <strong>Sanity check:</strong> Cells closer to exit 2 have smaller expected times
+              (<InlineMath math="w_1 \approx 15.3 < w_4 = 24 < w_6 \approx 33.3" />), which makes sense.
             </div>
           </span>
         }
       >
         <p>
-          In the 3x3 maze from Example 3.8, suppose cell 2 is the only exit. Mickey starts at cell 4.
+          In the 3&times;3 maze from Example 3.8 (cells 0&ndash;8), suppose cell 2 is the <strong>only</strong> exit.
+          Mickey starts at cell 4 and at each step moves to a uniformly random neighbor.
           Find the expected number of steps for Mickey to reach the exit.
         </p>
+        <div className="font-mono text-sm mt-2 text-center text-slate-400">
+          0 &mdash; 1 &mdash; [2]<br />
+          |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br />
+          3 &mdash; 4 &mdash; 5<br />
+          |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br />
+          6 &mdash; 7 &mdash; 8
+        </div>
       </ExerciseItem>
 
       <ExerciseItem
         number="3.5"
-        title="Patterns of Length 2"
+        title="Penney-ante with Length-2 Patterns"
         hint={
           <span>
-            With patterns of length 2 (<InlineMath math="HH, HT, TH, TT" />), the analysis is simpler. The state
-            after each flip is just the last flip (H or T). If Player Y picks first, can Player Z always find a
-            counter-strategy? Think about what happens with <InlineMath math="HH" /> vs <InlineMath math="TH" />.
+            With length-2 patterns (<InlineMath math="HH, HT, TH, TT" />), the state after each flip is just the last flip
+            (H or T), plus a start state. For each Y choice, try all Z choices and compute P(Z wins) using first-step analysis.
+            For example, Y=HH vs Z=TH: the only way Y wins is if the first two flips are both H.
           </span>
         }
         solution={
           <span>
-            <div className="mb-2">
-              With length-2 patterns, the phenomenon is less dramatic but still present:
+            <div className="mb-2"><strong>Setup:</strong> 4 possible patterns of length 2: HH, HT, TH, TT.</div>
+            <div className="mb-3"><strong>Example: Y=HH vs Z=TH</strong></div>
+            <div className="text-sm mb-2">
+              States: Start, last flip = H, last flip = T. Absorbing: HH (Y wins) and TH (Z wins).
             </div>
-            <div className="mb-2">
-              If Y picks HH, Z picks TH: P(Z wins) = 3/4 (Z wins unless the first two flips are HH).
+            <div className="text-sm mb-2">
+              &bull; From Start: flip H &rarr; state H, flip T &rarr; state T<br />
+              &bull; From state H: flip H &rarr; <strong>HH, Y wins</strong>; flip T &rarr; state T<br />
+              &bull; From state T: flip H &rarr; <strong>TH, Z wins</strong>; flip T &rarr; state T
             </div>
-            <div className="mb-2">
-              Similarly TT vs HT gives P(Z wins) = 3/4. For HT vs HH or TH vs TT, the probabilities are 1/2 (fair).
-              So the non-transitive phenomenon already appears at length 2 but is weaker than at length 3.
+            <div className="text-sm mb-2">
+              Let <InlineMath math="p_s" /> = P(Z wins | state <InlineMath math="s" />):
+            </div>
+            <div className="math-block text-sm">
+              <BlockMath math={String.raw`p_H = \tfrac{1}{2}(0) + \tfrac{1}{2}p_T = \tfrac{1}{2}p_T`} />
+              <BlockMath math={String.raw`p_T = \tfrac{1}{2}(1) + \tfrac{1}{2}p_T \implies p_T = 1`} />
+            </div>
+            <div className="text-sm mb-2">
+              So <InlineMath math="p_T = 1" /> (from T, Z always wins &mdash; flip H gives TH immediately, flip T stays in T).
+              And <InlineMath math="p_H = 1/2" />.
+            </div>
+            <div className="text-sm mb-3">
+              <InlineMath math="P(\text{Z wins}) = \frac{1}{2}p_H + \frac{1}{2}p_T = \frac{1}{2}\cdot\frac{1}{2} + \frac{1}{2}\cdot 1 = \frac{3}{4}" />
+            </div>
+            <div className="mb-2"><strong>Full matchup table</strong> (P(row beats column)):</div>
+            <div className="overflow-x-auto">
+              <table className="text-sm border-collapse mx-auto">
+                <thead>
+                  <tr>
+                    <th className="border border-slate-700 px-3 py-1 bg-slate-800/50"></th>
+                    <th className="border border-slate-700 px-3 py-1 bg-slate-800/50">HH</th>
+                    <th className="border border-slate-700 px-3 py-1 bg-slate-800/50">HT</th>
+                    <th className="border border-slate-700 px-3 py-1 bg-slate-800/50">TH</th>
+                    <th className="border border-slate-700 px-3 py-1 bg-slate-800/50">TT</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="border border-slate-700 px-3 py-1 font-bold bg-slate-800/50">HH</td>
+                    <td className="border border-slate-700 px-3 py-1 text-center">&mdash;</td>
+                    <td className="border border-slate-700 px-3 py-1 text-center">1/2</td>
+                    <td className="border border-slate-700 px-3 py-1 text-center text-red-400">1/4</td>
+                    <td className="border border-slate-700 px-3 py-1 text-center">1/2</td>
+                  </tr>
+                  <tr>
+                    <td className="border border-slate-700 px-3 py-1 font-bold bg-slate-800/50">HT</td>
+                    <td className="border border-slate-700 px-3 py-1 text-center">1/2</td>
+                    <td className="border border-slate-700 px-3 py-1 text-center">&mdash;</td>
+                    <td className="border border-slate-700 px-3 py-1 text-center">1/2</td>
+                    <td className="border border-slate-700 px-3 py-1 text-center text-red-400">1/4</td>
+                  </tr>
+                  <tr>
+                    <td className="border border-slate-700 px-3 py-1 font-bold bg-slate-800/50">TH</td>
+                    <td className="border border-slate-700 px-3 py-1 text-center text-emerald-400">3/4</td>
+                    <td className="border border-slate-700 px-3 py-1 text-center">1/2</td>
+                    <td className="border border-slate-700 px-3 py-1 text-center">&mdash;</td>
+                    <td className="border border-slate-700 px-3 py-1 text-center">1/2</td>
+                  </tr>
+                  <tr>
+                    <td className="border border-slate-700 px-3 py-1 font-bold bg-slate-800/50">TT</td>
+                    <td className="border border-slate-700 px-3 py-1 text-center">1/2</td>
+                    <td className="border border-slate-700 px-3 py-1 text-center text-emerald-400">3/4</td>
+                    <td className="border border-slate-700 px-3 py-1 text-center">1/2</td>
+                    <td className="border border-slate-700 px-3 py-1 text-center">&mdash;</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div className="mt-3 text-sm">
+              <strong>Conclusion:</strong> Non-transitivity occurs! TH beats HH with prob 3/4, and TT beats HT with prob 3/4.
+              The pattern is: the second player can always find a counter when the first player picks a "double" (HH or TT)
+              by choosing the pattern that starts with the opposite. However, the advantage is weaker (3/4) than with length-3
+              patterns (where advantages up to 7/8 are possible).
             </div>
           </span>
         }
       >
         <p>
           Consider the Penney-ante game but with patterns of length 2 instead of 3. Does the same
-          non-transitive dominance phenomenon occur? Analyze all matchups.
+          non-transitive dominance phenomenon occur? Compute P(row beats column) for all 4&times;4 matchups.
         </p>
       </ExerciseItem>
     </motion.div>
