@@ -657,6 +657,55 @@ function PenneyAnteGame() {
         <BlockMath math={String.raw`P = \begin{pmatrix} 1/2 & 1/2 & 0 & 0 \\ 0 & 0 & 1/2 & 1/2 \\ 1/2 & 1/2 & 0 & 0 \\ 0 & 0 & 1/2 & 1/2 \end{pmatrix}`} />
       </div>
 
+      {/* State transition diagram */}
+      <div className="mt-4 bg-slate-800/40 rounded-xl border border-slate-700 p-4">
+        <h4 className="text-sm font-semibold text-slate-400 mb-3 text-center">State Transition Diagram (last two flips)</h4>
+        <svg viewBox="0 0 480 260" className="w-full max-w-lg mx-auto" style={{ height: 220 }}>
+          <defs>
+            <marker id="penney-arrow" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
+            </marker>
+            <marker id="penney-arrow-indigo" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#818cf8" />
+            </marker>
+          </defs>
+          {/* Nodes: HH(120,60) HT(360,60) TH(120,200) TT(360,200) */}
+          {/* HH -> HH self-loop */}
+          <path d="M 105,38 A 20,20 0 1,1 135,38" fill="none" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#penney-arrow)" />
+          <text x="120" y="16" textAnchor="middle" fill="#a5b4fc" fontSize="11">½ (H)</text>
+          {/* HH -> HT */}
+          <line x1="148" y1="60" x2="332" y2="60" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#penney-arrow)" />
+          <text x="240" y="52" textAnchor="middle" fill="#a5b4fc" fontSize="11">½ (T)</text>
+          {/* HT -> TH */}
+          <line x1="348" y1="88" x2="132" y2="172" stroke="#818cf8" strokeWidth="1.5" markerEnd="url(#penney-arrow-indigo)" />
+          <text x="252" y="122" textAnchor="middle" fill="#a5b4fc" fontSize="11">½ (H)</text>
+          {/* HT -> TT */}
+          <line x1="360" y1="88" x2="360" y2="172" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#penney-arrow)" />
+          <text x="375" y="135" textAnchor="start" fill="#a5b4fc" fontSize="11">½ (T)</text>
+          {/* TH -> HH */}
+          <line x1="120" y1="172" x2="120" y2="88" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#penney-arrow)" />
+          <text x="105" y="135" textAnchor="end" fill="#a5b4fc" fontSize="11">½ (H)</text>
+          {/* TH -> HT */}
+          <line x1="132" y1="188" x2="348" y2="72" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#penney-arrow)" />
+          <text x="228" y="138" textAnchor="middle" fill="#a5b4fc" fontSize="11">½ (T)</text>
+          {/* TT -> TH */}
+          <line x1="332" y1="200" x2="148" y2="200" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#penney-arrow)" />
+          <text x="240" y="218" textAnchor="middle" fill="#a5b4fc" fontSize="11">½ (H)</text>
+          {/* TT -> TT self-loop */}
+          <path d="M 345,222 A 20,20 0 1,0 375,222" fill="none" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#penney-arrow)" />
+          <text x="360" y="254" textAnchor="middle" fill="#a5b4fc" fontSize="11">½ (T)</text>
+          {/* Node circles */}
+          <circle cx="120" cy="60" r="24" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+          <text x="120" y="64" textAnchor="middle" fill="#e2e8f0" fontSize="13" fontWeight="bold">HH</text>
+          <circle cx="360" cy="60" r="24" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+          <text x="360" y="64" textAnchor="middle" fill="#e2e8f0" fontSize="13" fontWeight="bold">HT</text>
+          <circle cx="120" cy="200" r="24" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+          <text x="120" y="204" textAnchor="middle" fill="#e2e8f0" fontSize="13" fontWeight="bold">TH</text>
+          <circle cx="360" cy="200" r="24" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+          <text x="360" y="204" textAnchor="middle" fill="#e2e8f0" fontSize="13" fontWeight="bold">TT</text>
+        </svg>
+      </div>
+
       {/* Dominance loop */}
       <div className="mt-4 bg-slate-800/40 rounded-xl border border-slate-700 overflow-hidden">
         <canvas ref={loopRef} className="w-full" style={{ height: 220 }} />
@@ -1477,6 +1526,66 @@ function FecundityModel() {
         <InlineMath math="E_2" /> (married), <InlineMath math="E_3" /> (divorced),{' '}
         <InlineMath math="E_4" /> (widowed), <InlineMath math="E_5" /> (out-of-population, absorbing).
       </p>
+
+      {/* State transition diagram */}
+      <div className="mt-4 bg-slate-800/40 rounded-xl border border-slate-700 p-4">
+        <h4 className="text-sm font-semibold text-slate-400 mb-3 text-center">State Transition Diagram</h4>
+        <svg viewBox="0 0 520 300" className="w-full max-w-2xl mx-auto" style={{ height: 260 }}>
+          <defs>
+            <marker id="fec-arrow" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
+            </marker>
+          </defs>
+          {/* Layout: E0(60,80) E1(180,80) E2(300,80) E3(180,200) E4(300,200) E5(420,150) */}
+          {/* E0 -> E1 */}
+          <line x1="88" y1="80" x2="152" y2="80" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#fec-arrow)" />
+          {/* E1 -> E2 */}
+          <line x1="208" y1="75" x2="272" y2="75" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#fec-arrow)" />
+          {/* E2 -> E1 (divorce route, curved above) */}
+          <path d="M 272,68 Q 240,40 208,68" fill="none" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#fec-arrow)" />
+          <text x="240" y="42" textAnchor="middle" fill="#94a3b8" fontSize="9">divorce</text>
+          {/* E2 -> E3 */}
+          <line x1="290" y1="108" x2="200" y2="172" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#fec-arrow)" />
+          {/* E2 -> E4 */}
+          <line x1="300" y1="108" x2="300" y2="172" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#fec-arrow)" />
+          {/* E3 -> E2 (remarry) */}
+          <line x1="200" y1="172" x2="282" y2="108" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#fec-arrow)" />
+          <text x="228" y="134" textAnchor="middle" fill="#94a3b8" fontSize="9">remarry</text>
+          {/* E4 -> E2 (remarry) */}
+          <path d="M 316,176 Q 340,140 316,108" fill="none" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#fec-arrow)" />
+          <text x="344" y="140" textAnchor="start" fill="#94a3b8" fontSize="9">remarry</text>
+          {/* E1 -> E5 */}
+          <line x1="200" y1="108" x2="400" y2="145" stroke="#f87171" strokeWidth="1" strokeDasharray="4 3" markerEnd="url(#fec-arrow)" />
+          {/* E2 -> E5 */}
+          <line x1="320" y1="100" x2="400" y2="140" stroke="#f87171" strokeWidth="1" strokeDasharray="4 3" markerEnd="url(#fec-arrow)" />
+          {/* E3 -> E5 */}
+          <line x1="200" y1="210" x2="400" y2="160" stroke="#f87171" strokeWidth="1" strokeDasharray="4 3" markerEnd="url(#fec-arrow)" />
+          {/* E4 -> E5 */}
+          <line x1="318" y1="205" x2="400" y2="160" stroke="#f87171" strokeWidth="1" strokeDasharray="4 3" markerEnd="url(#fec-arrow)" />
+          {/* E2 self-loop (stay married) */}
+          <path d="M 285,58 A 18,18 0 1,1 315,58" fill="none" stroke="#34d399" strokeWidth="1.5" markerEnd="url(#fec-arrow)" />
+          <text x="300" y="34" textAnchor="middle" fill="#34d399" fontSize="9">stay</text>
+          {/* Node circles */}
+          <circle cx="60" cy="80" r="22" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+          <text x="60" y="76" textAnchor="middle" fill="#c7d2fe" fontSize="10">E₀</text>
+          <text x="60" y="90" textAnchor="middle" fill="#94a3b8" fontSize="8">pre</text>
+          <circle cx="180" cy="80" r="22" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+          <text x="180" y="76" textAnchor="middle" fill="#c7d2fe" fontSize="10">E₁</text>
+          <text x="180" y="90" textAnchor="middle" fill="#94a3b8" fontSize="8">single</text>
+          <circle cx="300" cy="80" r="22" fill="#065f46" stroke="#34d399" strokeWidth="2" />
+          <text x="300" y="76" textAnchor="middle" fill="#d1fae5" fontSize="10">E₂</text>
+          <text x="300" y="90" textAnchor="middle" fill="#6ee7b7" fontSize="8">married</text>
+          <circle cx="180" cy="200" r="22" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+          <text x="180" y="196" textAnchor="middle" fill="#c7d2fe" fontSize="10">E₃</text>
+          <text x="180" y="210" textAnchor="middle" fill="#94a3b8" fontSize="8">divorced</text>
+          <circle cx="300" cy="200" r="22" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+          <text x="300" y="196" textAnchor="middle" fill="#c7d2fe" fontSize="10">E₄</text>
+          <text x="300" y="210" textAnchor="middle" fill="#94a3b8" fontSize="8">widowed</text>
+          <circle cx="420" cy="150" r="22" fill="#7f1d1d" stroke="#f87171" strokeWidth="2" />
+          <text x="420" y="146" textAnchor="middle" fill="#fecaca" fontSize="10">E₅</text>
+          <text x="420" y="160" textAnchor="middle" fill="#f87171" fontSize="8">absorb</text>
+        </svg>
+      </div>
 
       <div className="math-block">
         <BlockMath math={String.raw`\text{Mean number of married periods} = w_2 = 4.5`} />
