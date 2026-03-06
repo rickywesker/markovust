@@ -1718,6 +1718,45 @@ function Exercises() {
         <div className="math-block">
           <BlockMath math={String.raw`\text{States: } \{0, 1, 2, 3\}, \quad 3 = HHH \text{ (absorbing)}`} />
         </div>
+        <div className="mt-3 bg-slate-800/40 rounded-xl border border-slate-700 p-3">
+          <svg viewBox="0 0 520 120" className="w-full max-w-lg mx-auto" style={{ height: 100 }}>
+            <defs>
+              <marker id="ex37-arr" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
+              </marker>
+            </defs>
+            {/* 0 self-loop */}
+            <path d="M 55,30 A 18,18 0 1,1 85,30" fill="none" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ex37-arr)" />
+            <text x="70" y="10" textAnchor="middle" fill="#a5b4fc" fontSize="10">½(T)</text>
+            {/* 0 -> 1 */}
+            <line x1="98" y1="55" x2="172" y2="55" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ex37-arr)" />
+            <text x="135" y="48" textAnchor="middle" fill="#a5b4fc" fontSize="10">½(H)</text>
+            {/* 1 -> 0 */}
+            <path d="M 175,75 Q 135,100 95,75" fill="none" stroke="#f87171" strokeWidth="1.5" markerEnd="url(#ex37-arr)" />
+            <text x="135" y="98" textAnchor="middle" fill="#fca5a5" fontSize="10">½(T)</text>
+            {/* 1 -> 2 */}
+            <line x1="228" y1="55" x2="302" y2="55" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ex37-arr)" />
+            <text x="265" y="48" textAnchor="middle" fill="#a5b4fc" fontSize="10">½(H)</text>
+            {/* 2 -> 0 */}
+            <path d="M 310,75 Q 200,120 85,75" fill="none" stroke="#f87171" strokeWidth="1.5" markerEnd="url(#ex37-arr)" />
+            <text x="200" y="115" textAnchor="middle" fill="#fca5a5" fontSize="10">½(T) reset!</text>
+            {/* 2 -> 3 */}
+            <line x1="358" y1="55" x2="432" y2="55" stroke="#34d399" strokeWidth="1.5" markerEnd="url(#ex37-arr)" />
+            <text x="395" y="48" textAnchor="middle" fill="#6ee7b7" fontSize="10">½(H)</text>
+            {/* Nodes */}
+            <circle cx="70" cy="55" r="22" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+            <text x="70" y="59" textAnchor="middle" fill="#e2e8f0" fontSize="14" fontWeight="bold">0</text>
+            <circle cx="200" cy="55" r="22" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+            <text x="200" y="59" textAnchor="middle" fill="#e2e8f0" fontSize="14" fontWeight="bold">1</text>
+            <circle cx="330" cy="55" r="22" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+            <text x="330" y="59" textAnchor="middle" fill="#e2e8f0" fontSize="14" fontWeight="bold">2</text>
+            <circle cx="460" cy="55" r="22" fill="#065f46" stroke="#34d399" strokeWidth="2" />
+            <text x="460" y="59" textAnchor="middle" fill="#d1fae5" fontSize="14" fontWeight="bold">3</text>
+            {/* 3 self-loop */}
+            <path d="M 445,30 A 18,18 0 1,1 475,30" fill="none" stroke="#34d399" strokeWidth="1.5" markerEnd="url(#ex37-arr)" />
+            <text x="460" y="10" textAnchor="middle" fill="#6ee7b7" fontSize="10">1</text>
+          </svg>
+        </div>
       </ExerciseItem>
 
       <ExerciseItem
@@ -1786,6 +1825,87 @@ function Exercises() {
           At each step, both move independently to a uniformly random neighbor. Find the expected number of steps until
           the wolf catches the rabbit (they occupy the same node).
         </p>
+        <div className="mt-3 bg-slate-800/40 rounded-xl border border-slate-700 p-3">
+          <h5 className="text-xs font-semibold text-slate-500 mb-2 text-center">Path Graph</h5>
+          <svg viewBox="0 0 440 60" className="w-full max-w-md mx-auto" style={{ height: 50 }}>
+            {/* Edges */}
+            <line x1="68" y1="30" x2="152" y2="30" stroke="#475569" strokeWidth="2" />
+            <line x1="178" y1="30" x2="262" y2="30" stroke="#475569" strokeWidth="2" />
+            <line x1="288" y1="30" x2="372" y2="30" stroke="#475569" strokeWidth="2" />
+            {/* Implied edge 1-2 already drawn, add 4-5 */}
+            <line x1="398" y1="30" x2="398" y2="30" stroke="none" />
+            {/* Nodes */}
+            <circle cx="50" cy="30" r="18" fill="#7f1d1d" stroke="#f87171" strokeWidth="2" />
+            <text x="50" y="34" textAnchor="middle" fill="#fecaca" fontSize="12" fontWeight="bold">1</text>
+            <text x="50" y="55" textAnchor="middle" fill="#f87171" fontSize="9">W</text>
+            <circle cx="160" cy="30" r="18" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+            <text x="160" y="34" textAnchor="middle" fill="#e2e8f0" fontSize="12" fontWeight="bold">2</text>
+            <circle cx="270" cy="30" r="18" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+            <text x="270" y="34" textAnchor="middle" fill="#e2e8f0" fontSize="12" fontWeight="bold">3</text>
+            <circle cx="380" cy="30" r="18" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+            <text x="380" y="34" textAnchor="middle" fill="#e2e8f0" fontSize="12" fontWeight="bold">4</text>
+            {/* Node 5 needs edge from 4 */}
+            <line x1="398" y1="30" x2="472" y2="30" stroke="#475569" strokeWidth="2" />
+            {/* Actually let me fix viewbox */}
+          </svg>
+          <svg viewBox="0 0 500 70" className="w-full max-w-md mx-auto" style={{ height: 55 }}>
+            <line x1="68" y1="30" x2="152" y2="30" stroke="#475569" strokeWidth="2" />
+            <line x1="178" y1="30" x2="262" y2="30" stroke="#475569" strokeWidth="2" />
+            <line x1="288" y1="30" x2="372" y2="30" stroke="#475569" strokeWidth="2" />
+            <line x1="398" y1="30" x2="432" y2="30" stroke="#475569" strokeWidth="2" />
+            <circle cx="50" cy="30" r="18" fill="#7f1d1d" stroke="#f87171" strokeWidth="2" />
+            <text x="50" y="34" textAnchor="middle" fill="#fecaca" fontSize="12" fontWeight="bold">1</text>
+            <text x="50" y="58" textAnchor="middle" fill="#f87171" fontSize="9">Wolf</text>
+            <circle cx="160" cy="30" r="18" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+            <text x="160" y="34" textAnchor="middle" fill="#e2e8f0" fontSize="12" fontWeight="bold">2</text>
+            <circle cx="270" cy="30" r="18" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+            <text x="270" y="34" textAnchor="middle" fill="#e2e8f0" fontSize="12" fontWeight="bold">3</text>
+            <circle cx="380" cy="30" r="18" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+            <text x="380" y="34" textAnchor="middle" fill="#e2e8f0" fontSize="12" fontWeight="bold">4</text>
+            <circle cx="450" cy="30" r="18" fill="#065f46" stroke="#34d399" strokeWidth="2" />
+            <text x="450" y="34" textAnchor="middle" fill="#d1fae5" fontSize="12" fontWeight="bold">5</text>
+            <text x="450" y="58" textAnchor="middle" fill="#34d399" fontSize="9">Rabbit</text>
+          </svg>
+          <h5 className="text-xs font-semibold text-slate-500 mt-3 mb-2 text-center">Reduced State Space (W,R) with W &lt; R</h5>
+          <svg viewBox="0 0 460 150" className="w-full max-w-md mx-auto" style={{ height: 120 }}>
+            <defs>
+              <marker id="ex38-arr" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
+              </marker>
+            </defs>
+            {/* (1,5) -> (2,4): deterministic */}
+            <line x1="88" y1="40" x2="172" y2="40" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ex38-arr)" />
+            <text x="130" y="32" textAnchor="middle" fill="#a5b4fc" fontSize="10">1</text>
+            {/* (2,4) -> (1,3) */}
+            <line x1="195" y1="58" x2="305" y2="105" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ex38-arr)" />
+            <text x="240" y="90" textAnchor="middle" fill="#a5b4fc" fontSize="10">½</text>
+            {/* (2,4) -> (1,5) */}
+            <path d="M 180,55 Q 135,75 85,55" fill="none" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ex38-arr)" />
+            <text x="130" y="72" textAnchor="middle" fill="#a5b4fc" fontSize="10">¼</text>
+            {/* (2,4) -> caught */}
+            <line x1="228" y1="40" x2="382" y2="40" stroke="#34d399" strokeWidth="1.5" markerEnd="url(#ex38-arr)" />
+            <text x="305" y="32" textAnchor="middle" fill="#6ee7b7" fontSize="10">¼</text>
+            {/* (1,3) -> (2,4) */}
+            <line x1="320" y1="100" x2="220" y2="52" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ex38-arr)" />
+            <text x="280" y="68" textAnchor="middle" fill="#a5b4fc" fontSize="10">½</text>
+            {/* (1,3) -> caught */}
+            <line x1="348" y1="110" x2="390" y2="58" stroke="#34d399" strokeWidth="1.5" markerEnd="url(#ex38-arr)" />
+            <text x="382" y="88" textAnchor="middle" fill="#6ee7b7" fontSize="10">½</text>
+            {/* Nodes */}
+            <circle cx="60" cy="40" r="22" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+            <text x="60" y="38" textAnchor="middle" fill="#c7d2fe" fontSize="10">(1,5)</text>
+            <text x="60" y="50" textAnchor="middle" fill="#94a3b8" fontSize="8">d=4</text>
+            <circle cx="200" cy="40" r="22" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+            <text x="200" y="38" textAnchor="middle" fill="#c7d2fe" fontSize="10">(2,4)</text>
+            <text x="200" y="50" textAnchor="middle" fill="#94a3b8" fontSize="8">d=2</text>
+            <circle cx="330" cy="110" r="22" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+            <text x="330" y="108" textAnchor="middle" fill="#c7d2fe" fontSize="10">(1,3)</text>
+            <text x="330" y="120" textAnchor="middle" fill="#94a3b8" fontSize="8">d=2</text>
+            <circle cx="410" cy="40" r="22" fill="#065f46" stroke="#34d399" strokeWidth="2" />
+            <text x="410" y="38" textAnchor="middle" fill="#d1fae5" fontSize="10">d=0</text>
+            <text x="410" y="50" textAnchor="middle" fill="#6ee7b7" fontSize="8">caught</text>
+          </svg>
+        </div>
       </ExerciseItem>
 
       <ExerciseItem
@@ -1846,12 +1966,23 @@ function Exercises() {
           Mickey starts at cell 4 and at each step moves to a uniformly random neighbor.
           Find the expected number of steps for Mickey to reach the exit.
         </p>
-        <div className="font-mono text-sm mt-2 text-center text-slate-400">
-          0 &mdash; 1 &mdash; [2]<br />
-          |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br />
-          3 &mdash; 4 &mdash; 5<br />
-          |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br />
-          6 &mdash; 7 &mdash; 8
+        <div className="mt-3 bg-slate-800/40 rounded-xl border border-slate-700 p-3">
+          <svg viewBox="0 0 280 280" className="w-full max-w-[240px] mx-auto" style={{ height: 220 }}>
+            {/* Grid edges */}
+            {[[40,40,140,40],[140,40,240,40],[40,140,140,140],[140,140,240,140],[40,240,140,240],[140,240,240,240],
+              [40,40,40,140],[140,40,140,140],[240,40,240,140],[40,140,40,240],[140,140,140,240],[240,140,240,240]].map(([x1,y1,x2,y2],i) => (
+              <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#475569" strokeWidth="1.5" />
+            ))}
+            {/* Cell nodes */}
+            {[{x:40,y:40,l:'0'},{x:140,y:40,l:'1'},{x:240,y:40,l:'2',exit:true},{x:40,y:140,l:'3'},{x:140,y:140,l:'4',start:true},{x:240,y:140,l:'5'},{x:40,y:240,l:'6'},{x:140,y:240,l:'7'},{x:240,y:240,l:'8'}].map(n => (
+              <g key={n.l}>
+                <circle cx={n.x} cy={n.y} r="20" fill={n.exit ? '#065f46' : n.start ? '#3730a3' : '#1e1b4b'} stroke={n.exit ? '#34d399' : n.start ? '#818cf8' : '#475569'} strokeWidth="2" />
+                <text x={n.x} y={n.y+4} textAnchor="middle" fill={n.exit ? '#d1fae5' : '#e2e8f0'} fontSize="13" fontWeight="bold">{n.l}</text>
+                {n.exit && <text x={n.x} y={n.y+18} textAnchor="middle" fill="#34d399" fontSize="8">exit</text>}
+                {n.start && <text x={n.x} y={n.y+18} textAnchor="middle" fill="#818cf8" fontSize="8">start</text>}
+              </g>
+            ))}
+          </svg>
         </div>
       </ExerciseItem>
 
@@ -1948,6 +2079,53 @@ function Exercises() {
           Consider the Penney-ante game but with patterns of length 2 instead of 3. Does the same
           non-transitive dominance phenomenon occur? Compute P(row beats column) for all 4&times;4 matchups.
         </p>
+        <div className="mt-3 bg-slate-800/40 rounded-xl border border-slate-700 p-3">
+          <h5 className="text-xs font-semibold text-slate-500 mb-2 text-center">Example: Y=HH vs Z=TH</h5>
+          <svg viewBox="0 0 400 160" className="w-full max-w-sm mx-auto" style={{ height: 130 }}>
+            <defs>
+              <marker id="ex35-arr" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
+              </marker>
+              <marker id="ex35-arr-r" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#f87171" />
+              </marker>
+              <marker id="ex35-arr-g" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#34d399" />
+              </marker>
+            </defs>
+            {/* S -> H */}
+            <line x1="68" y1="75" x2="132" y2="75" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ex35-arr)" />
+            <text x="100" y="67" textAnchor="middle" fill="#a5b4fc" fontSize="10">½(H)</text>
+            {/* S -> T */}
+            <line x1="55" y1="98" x2="145" y2="138" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ex35-arr)" />
+            <text x="88" y="128" textAnchor="middle" fill="#a5b4fc" fontSize="10">½(T)</text>
+            {/* H -> HH (Y wins) */}
+            <line x1="188" y1="70" x2="292" y2="50" stroke="#f87171" strokeWidth="1.5" markerEnd="url(#ex35-arr-r)" />
+            <text x="240" y="52" textAnchor="middle" fill="#fca5a5" fontSize="10">½(H)</text>
+            {/* H -> T */}
+            <line x1="165" y1="98" x2="165" y2="125" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ex35-arr)" />
+            <text x="180" y="115" textAnchor="middle" fill="#a5b4fc" fontSize="10">½(T)</text>
+            {/* T -> TH (Z wins) */}
+            <line x1="188" y1="140" x2="292" y2="140" stroke="#34d399" strokeWidth="1.5" markerEnd="url(#ex35-arr-g)" />
+            <text x="240" y="133" textAnchor="middle" fill="#6ee7b7" fontSize="10">½(H)</text>
+            {/* T self-loop */}
+            <path d="M 148,152 A 16,16 0 1,0 148,155" fill="none" stroke="#64748b" strokeWidth="1.5" />
+            <text x="120" y="152" textAnchor="middle" fill="#a5b4fc" fontSize="10">½(T)</text>
+            {/* Nodes */}
+            <circle cx="50" cy="80" r="20" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+            <text x="50" y="84" textAnchor="middle" fill="#e2e8f0" fontSize="12" fontWeight="bold">S</text>
+            <circle cx="165" cy="75" r="20" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+            <text x="165" y="79" textAnchor="middle" fill="#e2e8f0" fontSize="12" fontWeight="bold">H</text>
+            <circle cx="165" cy="140" r="20" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+            <text x="165" y="144" textAnchor="middle" fill="#e2e8f0" fontSize="12" fontWeight="bold">T</text>
+            <circle cx="320" cy="45" r="24" fill="#7f1d1d" stroke="#f87171" strokeWidth="2" />
+            <text x="320" y="43" textAnchor="middle" fill="#fecaca" fontSize="11" fontWeight="bold">HH</text>
+            <text x="320" y="55" textAnchor="middle" fill="#f87171" fontSize="8">Y wins</text>
+            <circle cx="320" cy="140" r="24" fill="#065f46" stroke="#34d399" strokeWidth="2" />
+            <text x="320" y="138" textAnchor="middle" fill="#d1fae5" fontSize="11" fontWeight="bold">TH</text>
+            <text x="320" y="150" textAnchor="middle" fill="#34d399" fontSize="8">Z wins</text>
+          </svg>
+        </div>
       </ExerciseItem>
     </motion.div>
   )
