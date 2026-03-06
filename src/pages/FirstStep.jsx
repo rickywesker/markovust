@@ -1827,32 +1827,13 @@ function Exercises() {
         </p>
         <div className="mt-3 bg-slate-800/40 rounded-xl border border-slate-700 p-3">
           <h5 className="text-xs font-semibold text-slate-500 mb-2 text-center">Path Graph</h5>
-          <svg viewBox="0 0 440 60" className="w-full max-w-md mx-auto" style={{ height: 50 }}>
-            {/* Edges */}
-            <line x1="68" y1="30" x2="152" y2="30" stroke="#475569" strokeWidth="2" />
-            <line x1="178" y1="30" x2="262" y2="30" stroke="#475569" strokeWidth="2" />
-            <line x1="288" y1="30" x2="372" y2="30" stroke="#475569" strokeWidth="2" />
-            {/* Implied edge 1-2 already drawn, add 4-5 */}
-            <line x1="398" y1="30" x2="398" y2="30" stroke="none" />
-            {/* Nodes */}
-            <circle cx="50" cy="30" r="18" fill="#7f1d1d" stroke="#f87171" strokeWidth="2" />
-            <text x="50" y="34" textAnchor="middle" fill="#fecaca" fontSize="12" fontWeight="bold">1</text>
-            <text x="50" y="55" textAnchor="middle" fill="#f87171" fontSize="9">W</text>
-            <circle cx="160" cy="30" r="18" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
-            <text x="160" y="34" textAnchor="middle" fill="#e2e8f0" fontSize="12" fontWeight="bold">2</text>
-            <circle cx="270" cy="30" r="18" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
-            <text x="270" y="34" textAnchor="middle" fill="#e2e8f0" fontSize="12" fontWeight="bold">3</text>
-            <circle cx="380" cy="30" r="18" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
-            <text x="380" y="34" textAnchor="middle" fill="#e2e8f0" fontSize="12" fontWeight="bold">4</text>
-            {/* Node 5 needs edge from 4 */}
-            <line x1="398" y1="30" x2="472" y2="30" stroke="#475569" strokeWidth="2" />
-            {/* Actually let me fix viewbox */}
-          </svg>
           <svg viewBox="0 0 500 70" className="w-full max-w-md mx-auto" style={{ height: 55 }}>
-            <line x1="68" y1="30" x2="152" y2="30" stroke="#475569" strokeWidth="2" />
-            <line x1="178" y1="30" x2="262" y2="30" stroke="#475569" strokeWidth="2" />
-            <line x1="288" y1="30" x2="372" y2="30" stroke="#475569" strokeWidth="2" />
+            {/* Edges: 1-2, 2-3, 3-4, 4-5 */}
+            <line x1="68" y1="30" x2="142" y2="30" stroke="#475569" strokeWidth="2" />
+            <line x1="178" y1="30" x2="252" y2="30" stroke="#475569" strokeWidth="2" />
+            <line x1="288" y1="30" x2="362" y2="30" stroke="#475569" strokeWidth="2" />
             <line x1="398" y1="30" x2="432" y2="30" stroke="#475569" strokeWidth="2" />
+            {/* Nodes */}
             <circle cx="50" cy="30" r="18" fill="#7f1d1d" stroke="#f87171" strokeWidth="2" />
             <text x="50" y="34" textAnchor="middle" fill="#fecaca" fontSize="12" fontWeight="bold">1</text>
             <text x="50" y="58" textAnchor="middle" fill="#f87171" fontSize="9">Wolf</text>
