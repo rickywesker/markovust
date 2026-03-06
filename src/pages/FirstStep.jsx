@@ -1848,43 +1848,62 @@ function Exercises() {
             <text x="450" y="58" textAnchor="middle" fill="#34d399" fontSize="9">Rabbit</text>
           </svg>
           <h5 className="text-xs font-semibold text-slate-500 mt-3 mb-2 text-center">Reduced State Space (W,R) with W &lt; R</h5>
-          <svg viewBox="0 0 460 150" className="w-full max-w-md mx-auto" style={{ height: 120 }}>
+          <svg viewBox="0 0 520 200" className="w-full max-w-lg mx-auto" style={{ height: 170 }}>
             <defs>
               <marker id="ex38-arr" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse">
                 <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
               </marker>
+              <marker id="ex38-arr-g" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#34d399" />
+              </marker>
             </defs>
-            {/* (1,5) -> (2,4): deterministic */}
-            <line x1="88" y1="40" x2="172" y2="40" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ex38-arr)" />
-            <text x="130" y="32" textAnchor="middle" fill="#a5b4fc" fontSize="10">1</text>
-            {/* (2,4) -> (1,3) */}
-            <line x1="195" y1="58" x2="305" y2="105" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ex38-arr)" />
-            <text x="240" y="90" textAnchor="middle" fill="#a5b4fc" fontSize="10">½</text>
-            {/* (2,4) -> (1,5) */}
-            <path d="M 180,55 Q 135,75 85,55" fill="none" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ex38-arr)" />
-            <text x="130" y="72" textAnchor="middle" fill="#a5b4fc" fontSize="10">¼</text>
-            {/* (2,4) -> caught */}
-            <line x1="228" y1="40" x2="382" y2="40" stroke="#34d399" strokeWidth="1.5" markerEnd="url(#ex38-arr)" />
-            <text x="305" y="32" textAnchor="middle" fill="#6ee7b7" fontSize="10">¼</text>
-            {/* (1,3) -> (2,4) */}
-            <line x1="320" y1="100" x2="220" y2="52" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ex38-arr)" />
-            <text x="280" y="68" textAnchor="middle" fill="#a5b4fc" fontSize="10">½</text>
-            {/* (1,3) -> caught */}
-            <line x1="348" y1="110" x2="390" y2="58" stroke="#34d399" strokeWidth="1.5" markerEnd="url(#ex38-arr)" />
-            <text x="382" y="88" textAnchor="middle" fill="#6ee7b7" fontSize="10">½</text>
+            {/* Layout: (1,5)@(70,50)  (2,4)@(220,50)  caught@(450,100)  (1,3)@(140,160)  (3,5)@(330,160) */}
+            {/* (1,5) -> (2,4): prob 1 */}
+            <line x1="98" y1="50" x2="192" y2="50" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ex38-arr)" />
+            <text x="145" y="42" textAnchor="middle" fill="#a5b4fc" fontSize="10">1</text>
+            {/* (2,4) -> (1,5): ¼ */}
+            <path d="M 200,65 Q 140,85 90,65" fill="none" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ex38-arr)" />
+            <text x="140" y="82" textAnchor="middle" fill="#a5b4fc" fontSize="10">¼</text>
+            {/* (2,4) -> (1,3): ¼ */}
+            <line x1="205" y1="72" x2="155" y2="135" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ex38-arr)" />
+            <text x="168" y="100" textAnchor="middle" fill="#a5b4fc" fontSize="10">¼</text>
+            {/* (2,4) -> (3,5): ¼ */}
+            <line x1="238" y1="72" x2="315" y2="135" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ex38-arr)" />
+            <text x="288" y="100" textAnchor="middle" fill="#a5b4fc" fontSize="10">¼</text>
+            {/* (2,4) -> caught: ¼ */}
+            <line x1="248" y1="55" x2="422" y2="95" stroke="#34d399" strokeWidth="1.5" markerEnd="url(#ex38-arr-g)" />
+            <text x="340" y="65" textAnchor="middle" fill="#6ee7b7" fontSize="10">¼</text>
+            {/* (1,3) -> (2,4): ½ */}
+            <line x1="155" y1="138" x2="208" y2="72" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ex38-arr)" />
+            <text x="195" y="112" textAnchor="middle" fill="#a5b4fc" fontSize="10">½</text>
+            {/* (1,3) -> caught: ½ */}
+            <line x1="165" y1="165" x2="425" y2="110" stroke="#34d399" strokeWidth="1.5" markerEnd="url(#ex38-arr-g)" />
+            <text x="310" y="148" textAnchor="middle" fill="#6ee7b7" fontSize="10">½</text>
+            {/* (3,5) -> (2,4): ½ */}
+            <line x1="318" y1="140" x2="235" y2="72" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ex38-arr)" />
+            <text x="265" y="112" textAnchor="middle" fill="#a5b4fc" fontSize="10">½</text>
+            {/* (3,5) -> caught: ½ */}
+            <line x1="352" y1="155" x2="430" y2="118" stroke="#34d399" strokeWidth="1.5" markerEnd="url(#ex38-arr-g)" />
+            <text x="405" y="145" textAnchor="middle" fill="#6ee7b7" fontSize="10">½</text>
+            {/* Symmetry annotation */}
+            <line x1="140" y1="180" x2="330" y2="180" stroke="#f59e0b" strokeWidth="1" strokeDasharray="4 3" />
+            <text x="235" y="195" textAnchor="middle" fill="#f59e0b" fontSize="9">symmetric: w = w</text>
             {/* Nodes */}
-            <circle cx="60" cy="40" r="22" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
-            <text x="60" y="38" textAnchor="middle" fill="#c7d2fe" fontSize="10">(1,5)</text>
-            <text x="60" y="50" textAnchor="middle" fill="#94a3b8" fontSize="8">d=4</text>
-            <circle cx="200" cy="40" r="22" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
-            <text x="200" y="38" textAnchor="middle" fill="#c7d2fe" fontSize="10">(2,4)</text>
-            <text x="200" y="50" textAnchor="middle" fill="#94a3b8" fontSize="8">d=2</text>
-            <circle cx="330" cy="110" r="22" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
-            <text x="330" y="108" textAnchor="middle" fill="#c7d2fe" fontSize="10">(1,3)</text>
-            <text x="330" y="120" textAnchor="middle" fill="#94a3b8" fontSize="8">d=2</text>
-            <circle cx="410" cy="40" r="22" fill="#065f46" stroke="#34d399" strokeWidth="2" />
-            <text x="410" y="38" textAnchor="middle" fill="#d1fae5" fontSize="10">d=0</text>
-            <text x="410" y="50" textAnchor="middle" fill="#6ee7b7" fontSize="8">caught</text>
+            <circle cx="70" cy="50" r="24" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+            <text x="70" y="48" textAnchor="middle" fill="#c7d2fe" fontSize="10">(1,5)</text>
+            <text x="70" y="60" textAnchor="middle" fill="#94a3b8" fontSize="8">d=4</text>
+            <circle cx="220" cy="50" r="24" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+            <text x="220" y="48" textAnchor="middle" fill="#c7d2fe" fontSize="10">(2,4)</text>
+            <text x="220" y="60" textAnchor="middle" fill="#94a3b8" fontSize="8">d=2</text>
+            <circle cx="140" cy="160" r="24" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+            <text x="140" y="158" textAnchor="middle" fill="#c7d2fe" fontSize="10">(1,3)</text>
+            <text x="140" y="170" textAnchor="middle" fill="#94a3b8" fontSize="8">d=2</text>
+            <circle cx="330" cy="160" r="24" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
+            <text x="330" y="158" textAnchor="middle" fill="#c7d2fe" fontSize="10">(3,5)</text>
+            <text x="330" y="170" textAnchor="middle" fill="#94a3b8" fontSize="8">d=2</text>
+            <circle cx="450" cy="100" r="24" fill="#065f46" stroke="#34d399" strokeWidth="2" />
+            <text x="450" y="98" textAnchor="middle" fill="#d1fae5" fontSize="10">d=0</text>
+            <text x="450" y="110" textAnchor="middle" fill="#6ee7b7" fontSize="8">caught</text>
           </svg>
         </div>
       </ExerciseItem>
