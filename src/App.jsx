@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import ScrollToTop from './components/ScrollToTop'
 import Layout from './components/Layout'
+import ProtectedRoute from './components/ProtectedRoute'
 import Home from './pages/Home'
 import Examples from './pages/Examples'
 import Definitions from './pages/Definitions'
@@ -11,6 +12,11 @@ import FirstStep from './pages/FirstStep'
 import Branching from './pages/Branching'
 import RegularMC from './pages/RegularMC'
 import Classification from './pages/Classification'
+import LoginPage from './pages/LoginPage'
+import SignupPage from './pages/SignupPage'
+import QuestionListPage from './pages/QuestionListPage'
+import QuestionPage from './pages/QuestionPage'
+import ProgressPage from './pages/ProgressPage'
 
 export default function App() {
   return (
@@ -28,6 +34,11 @@ export default function App() {
         <Route path="regular-mc" element={<RegularMC />} />
         <Route path="classification" element={<Classification />} />
         <Route path="exercises" element={<Exercises />} />
+        <Route path="login" element={<LoginPage />} />
+        <Route path="signup" element={<SignupPage />} />
+        <Route path="questions" element={<ProtectedRoute><QuestionListPage /></ProtectedRoute>} />
+        <Route path="question/:id" element={<ProtectedRoute><QuestionPage /></ProtectedRoute>} />
+        <Route path="progress" element={<ProtectedRoute><ProgressPage /></ProtectedRoute>} />
       </Route>
     </Routes>
     </>

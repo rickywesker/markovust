@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useLocation, Link } from 'react-router-dom'
 import { useState } from 'react'
+import { useAuth } from '../contexts/AuthContext'
 
 const navItems = [
   { path: '/', label: 'Home' },
@@ -12,6 +13,8 @@ const navItems = [
   { path: '/regular-mc', label: '4.1-4.2 Regular MC' },
   { path: '/classification', label: '4.3-4.4 Classification' },
   { path: '/exercises', label: 'Exercises' },
+  { path: '/questions', label: 'Questions' },
+  { path: '/progress', label: 'My Progress' },
 ]
 
 const navGroups = [
@@ -35,12 +38,21 @@ const navGroups = [
     ],
   },
   { items: [{ path: '/exercises', label: 'Exercises' }] },
+  {
+    title: 'Practice',
+    items: [
+      { path: '/questions', label: 'Questions' },
+      { path: '/progress', label: 'My Progress' },
+    ],
+  },
 ]
 
 const linkBase = 'block px-4 py-2.5 pl-6 rounded-r-lg text-sm text-slate-400 border-l-[3px] border-transparent hover:text-white hover:bg-slate-800/60 transition-all duration-150'
 const linkActive = 'border-l-[3px] !border-indigo-500 bg-indigo-500/10 !text-white font-medium'
 
 function SidebarContent({ onNavigate }) {
+  const { user, signOut } = useAuth()
+
   return (
     <>
       <div className="px-4 pt-6 pb-4">
@@ -74,6 +86,16 @@ function SidebarContent({ onNavigate }) {
           </div>
         ))}
       </nav>
+      <div className="px-4 py-4 border-t border-slate-800">
+        {user ? (
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-slate-400 truncate max-w-[140px]">{user.email}</span>
+            <button onClick={() => { signOut(); onNavigate?.(); }} className="text-xs text-slate-500 hover:text-red-400 transition-colors cursor-pointer">Logout</button>
+          </div>
+        ) : (
+          <NavLink to="/login" onClick={onNavigate} className="text-sm text-indigo-400 hover:underline">Login</NavLink>
+        )}
+      </div>
     </>
   )
 }
