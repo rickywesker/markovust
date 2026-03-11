@@ -96,37 +96,19 @@ function parseRow(rowStr) {
     id: intVal(0),
     code: val(1),
     category: intVal(2),
-    problem: convertLatex(val(3)),
-    choices_a: convertLatex(val(10)),
-    choices_b: convertLatex(val(11)),
-    choices_c: convertLatex(val(12)),
-    choices_d: convertLatex(val(13)),
-    choices_e: convertLatex(val(14)),
-    choices_f: convertLatex(val(15)),
+    problem: val(3),
+    choices_a: val(10),
+    choices_b: val(11),
+    choices_c: val(12),
+    choices_d: val(13),
+    choices_e: val(14),
+    choices_f: val(15),
     answer: val(22),
-    solutions: convertLatex(val(26)),
+    solutions: val(26),
     difficulty: intVal(40) || 1,
     problem_images: problemImages.map(markImage),
     solution_images: solutionImages.map(markImage),
   };
-}
-
-// --- LaTeX conversion (MathJax → KaTeX) ---
-function convertLatex(text) {
-  if (!text) return text;
-  return text
-    .replace(/\\hbox\s*\{([^}]*)\}/g, '\\text{$1}')
-    .replace(/\\textcolor\[rgb\]\{([^}]+)\}\{/g, (_, rgb) => {
-      const [r, g, b] = rgb.split(',').map(Number);
-      const hex = '#' + [r, g, b].map(v => Math.round(v * 255).toString(16).padStart(2, '0')).join('');
-      return `\\textcolor{${hex}}{`;
-    })
-    // eqnarray(*) → aligned (KaTeX doesn't support eqnarray)
-    .replace(/\\begin\{eqnarray\*?\}/g, '\\begin{aligned}')
-    .replace(/\\end\{eqnarray\*?\}/g, '\\end{aligned}')
-    // eqnarray uses &=& alignment; aligned uses single & before =
-    .replace(/&=&/g, '&=')
-    .replace(/\\qquad\s*/g, '\\quad ');
 }
 
 // --- Insert into Supabase ---

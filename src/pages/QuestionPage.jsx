@@ -15,6 +15,7 @@ export default function QuestionPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [prevAnswer, setPrevAnswer] = useState(null);
+  const [adjacentIds, setAdjacentIds] = useState({ prev: null, next: null });
 
   useEffect(() => {
     async function load() {
@@ -39,6 +40,12 @@ export default function QuestionPage() {
       if (answers?.length > 0) {
         setPrevAnswer(answers[0]);
       }
+
+      // Fetch adjacent question IDs
+      const { data: prevQ } = await supabase.from('questions').select('id').lt('id', id).order('id', { ascending: false }).limit(1);
+      const { data: nextQ } = await supabase.from('questions').select('id').gt('id', id).order('id', { ascending: true }).limit(1);
+      setAdjacentIds({ prev: prevQ?.[0]?.id ?? null, next: nextQ?.[0]?.id ?? null });
+
       setLoading(false);
     }
     load();
@@ -165,10 +172,12 @@ export default function QuestionPage() {
       </div>
 
       <div className="flex justify-between">
-        {parseInt(id) > 1 && (
-          <Link to={`/question/${parseInt(id) - 1}`} className="text-slate-400 hover:text-indigo-400">&larr; Previous</Link>
+        {adjacentIds.prev && (
+          <Link to={`/question/${adjacentIds.prev}`} className="text-slate-400 hover:text-indigo-400">&larr; Previous</Link>
         )}
-        <Link to={`/question/${parseInt(id) + 1}`} className="text-slate-400 hover:text-indigo-400 ml-auto">Next &rarr;</Link>
+        {adjacentIds.next && (
+          <Link to={`/question/${adjacentIds.next}`} className="text-slate-400 hover:text-indigo-400 ml-auto">Next &rarr;</Link>
+        )}
       </div>
     </div>
   );
