@@ -8,18 +8,40 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let resolved = false;
+
+    // Timeout fallback: if getSession() hangs (navigator.locks deadlock), force loading to false
+    const timeout = setTimeout(() => {
+      if (!resolved) {
+        resolved = true;
+        setLoading(false);
+      }
+    }, 5000);
+
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
+      if (!resolved) {
+        resolved = true;
+        clearTimeout(timeout);
+        setUser(session?.user ?? null);
+        setLoading(false);
+      }
     }).catch(() => {
-      setLoading(false);
+      if (!resolved) {
+        resolved = true;
+        clearTimeout(timeout);
+        setLoading(false);
+      }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         setUser(session?.user ?? null);
+        if (!resolved) {
+          resolved = true;
+          clearTimeout(timeout);
+          setLoading(false);
+        }
         if (event === 'SIGNED_IN' && session?.user) {
-          // Ensure profile exists
           const { data } = await supabase.from('profiles').select('id').eq('id', session.user.id).single();
           if (!data) {
             await supabase.from('profiles').insert({ id: session.user.id });
@@ -28,7 +50,10 @@ export function AuthProvider({ children }) {
       }
     );
 
-    return () => subscription.unsubscribe();
+    return () => {
+      clearTimeout(timeout);
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signIn = (email, password) =>
