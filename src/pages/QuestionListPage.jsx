@@ -30,24 +30,27 @@ export default function QuestionListPage() {
   useEffect(() => {
     async function load() {
       setLoading(true);
-      let query = supabase.from('questions').select('id, code, category, difficulty');
-      if (category > 0) query = query.eq('category', category);
-      const { data } = await query.order('code');
-      setQuestions(data || []);
+      try {
+        let query = supabase.from('questions').select('id, code, category, difficulty');
+        if (category > 0) query = query.eq('category', category);
+        const { data } = await query.order('code');
+        setQuestions(data || []);
 
-      const { data: answers } = await supabase
-        .from('user_answers')
-        .select('question_id, is_correct')
-        .eq('user_id', user.id);
+        const { data: answers } = await supabase
+          .from('user_answers')
+          .select('question_id, is_correct')
+          .eq('user_id', user.id);
 
-      const map = {};
-      for (const a of (answers || [])) {
-        if (!map[a.question_id] || a.is_correct) {
-          map[a.question_id] = a.is_correct;
+        const map = {};
+        for (const a of (answers || [])) {
+          if (!map[a.question_id] || a.is_correct) {
+            map[a.question_id] = a.is_correct;
+          }
         }
+        setAnswered(map);
+      } finally {
+        setLoading(false);
       }
-      setAnswered(map);
-      setLoading(false);
     }
     load();
   }, [category, user.id]);
