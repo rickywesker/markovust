@@ -999,8 +999,43 @@ function SpaceTimeDemo() {
     ctx.textAlign = 'center'
     ctx.fillText('Step n', padL + plotW / 2, padT + plotH + 28)
 
-    // Theoretical pi_0 line
+    // ±1 SE and ±2 SE bands for space average
+    const se = Math.sqrt(piTheory[0] * (1 - piTheory[0]) / NUM_CHAINS)
     const piY = padT + plotH * (1 - piTheory[0])
+    const se1Upper = padT + plotH * (1 - (piTheory[0] + se))
+    const se1Lower = padT + plotH * (1 - (piTheory[0] - se))
+    const se2Upper = padT + plotH * (1 - (piTheory[0] + 2 * se))
+    const se2Lower = padT + plotH * (1 - (piTheory[0] - 2 * se))
+
+    // ±2 SE shaded band (lighter)
+    ctx.fillStyle = 'rgba(96, 165, 250, 0.06)'
+    ctx.fillRect(padL, se2Upper, plotW, se2Lower - se2Upper)
+
+    // ±1 SE shaded band (darker)
+    ctx.fillStyle = 'rgba(96, 165, 250, 0.10)'
+    ctx.fillRect(padL, se1Upper, plotW, se1Lower - se1Upper)
+
+    // ±2 SE dashed lines
+    ctx.setLineDash([4, 4])
+    ctx.strokeStyle = 'rgba(96, 165, 250, 0.2)'
+    ctx.lineWidth = 1
+    ctx.beginPath(); ctx.moveTo(padL, se2Upper); ctx.lineTo(padL + plotW, se2Upper); ctx.stroke()
+    ctx.beginPath(); ctx.moveTo(padL, se2Lower); ctx.lineTo(padL + plotW, se2Lower); ctx.stroke()
+
+    // ±1 SE dashed lines
+    ctx.strokeStyle = 'rgba(96, 165, 250, 0.35)'
+    ctx.beginPath(); ctx.moveTo(padL, se1Upper); ctx.lineTo(padL + plotW, se1Upper); ctx.stroke()
+    ctx.beginPath(); ctx.moveTo(padL, se1Lower); ctx.lineTo(padL + plotW, se1Lower); ctx.stroke()
+    ctx.setLineDash([])
+
+    // SE labels on right
+    ctx.fillStyle = 'rgba(96, 165, 250, 0.5)'; ctx.font = '9px Inter, system-ui, sans-serif'; ctx.textAlign = 'left'
+    ctx.fillText('+1 SE', padL + plotW + 6, se1Upper + 3)
+    ctx.fillText('-1 SE', padL + plotW + 6, se1Lower + 3)
+    ctx.fillText('+2 SE', padL + plotW + 6, se2Upper + 3)
+    ctx.fillText('-2 SE', padL + plotW + 6, se2Lower + 3)
+
+    // Theoretical pi_0 line
     ctx.setLineDash([6, 4])
     ctx.strokeStyle = '#fbbf24'
     ctx.lineWidth = 1.5
@@ -1039,7 +1074,7 @@ function SpaceTimeDemo() {
     ctx.fillStyle = '#f472b6'
     ctx.fillRect(padL + plotW + 6, ly + 16, 12, 3)
     ctx.fillText('Time avg', padL + plotW + 22, ly + 20)
-  }, [spaceData, timeData])
+  }, [spaceData, timeData, NUM_CHAINS])
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="example-box">
