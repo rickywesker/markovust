@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { InlineMath, BlockMath } from '../utils/MathRenderer'
 import { matMul, matPow } from '../utils/matrix'
+import MarkovDiagram from '../components/MarkovDiagram'
 
 /* ──────────────────────────────────────────────
    Sections 4.3–4.4: Sophisticated Examples &
@@ -132,6 +133,28 @@ function ChelseaSimulator() {
       </p>
       <div className="math-block">
         <BlockMath math={String.raw`P = \begin{pmatrix} 1{-}p & 0 & p & 0 \\ 1{-}p & 0 & p & 0 \\ 0 & 1{-}p & 0 & p \\ 0 & 0 & 1 & 0 \end{pmatrix} \quad \text{States: } (2,0),\,(1,1),\,(1,0),\,(0,1)`} />
+      </div>
+      <div className="my-4">
+        <MarkovDiagram
+          states={[
+            { id: '(2,0)', label: '(2,0)', color: '#10b981', x: 100, y: 60 },
+            { id: '(1,1)', label: '(1,1)', color: '#6366f1', x: 320, y: 60 },
+            { id: '(1,0)', label: '(1,0)', color: '#f59e0b', x: 320, y: 220 },
+            { id: '(0,1)', label: '(0,1)', color: '#ef4444', x: 100, y: 220 },
+          ]}
+          transitions={[
+            { from: '(2,0)', to: '(2,0)', prob: 0.8, label: '1-p' },
+            { from: '(2,0)', to: '(1,0)', prob: 0.2, label: 'p' },
+            { from: '(1,1)', to: '(2,0)', prob: 0.8, label: '1-p' },
+            { from: '(1,1)', to: '(1,0)', prob: 0.2, label: 'p' },
+            { from: '(1,0)', to: '(1,1)', prob: 0.8, label: '1-p' },
+            { from: '(1,0)', to: '(0,1)', prob: 0.2, label: 'p' },
+            { from: '(0,1)', to: '(1,0)', prob: 1, label: '1' },
+          ]}
+          layout="custom"
+          width={420}
+          height={280}
+        />
       </div>
       <div className="math-block">
         <BlockMath math={String.raw`\pi = \left(\frac{1-p}{1+p+p^2},\;\frac{p}{1+p+p^2},\;\frac{p}{1+p+p^2},\;\frac{p^2}{1+p+p^2}\right)`} />
@@ -315,6 +338,29 @@ function StockSimulator() {
         <BlockMath math={String.raw`\pi = \left(\tfrac{3}{11},\;\tfrac{1}{11},\;\tfrac{1}{11},\;\tfrac{6}{11}\right)`} />
         <p className="text-slate-400 text-sm mt-1">Long-run fraction of UP days: <InlineMath math={String.raw`\pi_0+\pi_2 = \frac{4}{11}\approx 36.4\%`} /></p>
       </div>
+      <div className="my-4">
+        <MarkovDiagram
+          states={[
+            { id: '(U,U)', label: '(U,U)', color: '#10b981', x: 100, y: 60 },
+            { id: '(D,U)', label: '(D,U)', color: '#6366f1', x: 320, y: 60 },
+            { id: '(U,D)', label: '(U,D)', color: '#f59e0b', x: 100, y: 220 },
+            { id: '(D,D)', label: '(D,D)', color: '#ef4444', x: 320, y: 220 },
+          ]}
+          transitions={[
+            { from: '(U,U)', to: '(U,U)', prob: 0.8, label: '0.8' },
+            { from: '(U,U)', to: '(U,D)', prob: 0.2, label: '0.2' },
+            { from: '(D,U)', to: '(U,U)', prob: 0.6, label: '0.6' },
+            { from: '(D,U)', to: '(U,D)', prob: 0.4, label: '0.4' },
+            { from: '(U,D)', to: '(D,U)', prob: 0.4, label: '0.4' },
+            { from: '(U,D)', to: '(D,D)', prob: 0.6, label: '0.6' },
+            { from: '(D,D)', to: '(D,U)', prob: 0.1, label: '0.1' },
+            { from: '(D,D)', to: '(D,D)', prob: 0.9, label: '0.9' },
+          ]}
+          layout="custom"
+          width={420}
+          height={280}
+        />
+      </div>
 
       <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm">
         {['UU', 'DU', 'UD', 'DD'].map(key => (
@@ -444,6 +490,32 @@ function AgeReplacementPolicy() {
       <div className="math-block">
         <BlockMath math={String.raw`P_{k,0} = p_k, \quad P_{k,k+1} = 1-p_k \;\;(k \le N{-}2), \quad P_{N-1,0} = 1`} />
         <BlockMath math={String.raw`\pi_k = (1-p_{k-1})(1-p_{k-2})\cdots(1-p_0)\,\pi_0`} />
+      </div>
+      <div className="my-4">
+        <p className="text-slate-400 text-xs mb-1 text-center">State transition diagram for N = 5</p>
+        <MarkovDiagram
+          states={[
+            { id: '0', label: '0', color: '#10b981', x: 60, y: 180 },
+            { id: '1', label: '1', color: '#6366f1', x: 140, y: 80 },
+            { id: '2', label: '2', color: '#f59e0b', x: 240, y: 50 },
+            { id: '3', label: '3', color: '#ec4899', x: 340, y: 80 },
+            { id: '4', label: '4', color: '#ef4444', x: 420, y: 180 },
+          ]}
+          transitions={[
+            { from: '0', to: '0', prob: 0, label: 'p\u2080' },
+            { from: '0', to: '1', prob: 0, label: '1-p\u2080' },
+            { from: '1', to: '0', prob: 0, label: 'p\u2081' },
+            { from: '1', to: '2', prob: 0, label: '1-p\u2081' },
+            { from: '2', to: '0', prob: 0, label: 'p\u2082' },
+            { from: '2', to: '3', prob: 0, label: '1-p\u2082' },
+            { from: '3', to: '0', prob: 0, label: 'p\u2083' },
+            { from: '3', to: '4', prob: 0, label: '1-p\u2083' },
+            { from: '4', to: '0', prob: 1, label: '1' },
+          ]}
+          layout="custom"
+          width={480}
+          height={280}
+        />
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-4">

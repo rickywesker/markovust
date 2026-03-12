@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { InlineMath, BlockMath } from '../utils/MathRenderer'
 import { matMul, matPow, identity, heatColor } from '../utils/matrix'
+import MarkovDiagram from '../components/MarkovDiagram'
 
 function allPositive(M) {
   for (let i = 0; i < M.length; i++)
@@ -1114,6 +1115,23 @@ export default function RegularMC() {
           <div className="math-block">
             <BlockMath math={String.raw`P = \begin{pmatrix} 0.33 & 0.67 \\ 0.75 & 0.25 \end{pmatrix}`} />
           </div>
+          <div className="my-4">
+            <MarkovDiagram
+              states={[
+                { id: '0', label: '0', color: '#10b981', x: 120, y: 100 },
+                { id: '1', label: '1', color: '#6366f1', x: 300, y: 100 },
+              ]}
+              transitions={[
+                { from: '0', to: '0', prob: 0.33, label: '1/3' },
+                { from: '0', to: '1', prob: 0.67, label: '2/3' },
+                { from: '1', to: '0', prob: 0.75, label: '3/4' },
+                { from: '1', to: '1', prob: 0.25, label: '1/4' },
+              ]}
+              layout="custom"
+              width={420}
+              height={200}
+            />
+          </div>
           <p className="text-slate-300 mb-2">Computing successive powers:</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div className="math-block">
@@ -1141,6 +1159,21 @@ export default function RegularMC() {
           </p>
           <div className="math-block">
             <BlockMath math={String.raw`P = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}`} />
+          </div>
+          <div className="my-4">
+            <MarkovDiagram
+              states={[
+                { id: '0', label: '0', color: '#ef4444', x: 120, y: 100 },
+                { id: '1', label: '1', color: '#f59e0b', x: 300, y: 100 },
+              ]}
+              transitions={[
+                { from: '0', to: '1', prob: 1, label: '1' },
+                { from: '1', to: '0', prob: 1, label: '1' },
+              ]}
+              layout="custom"
+              width={420}
+              height={200}
+            />
           </div>
           <p className="text-slate-300 mb-2">
             We get <InlineMath math="P^k = P" /> for odd <InlineMath math="k" /> and{' '}
@@ -1173,6 +1206,29 @@ export default function RegularMC() {
           </p>
           <div className="math-block">
             <BlockMath math={String.raw`P(X_n = j) \to \pi_j > 0 \quad \text{as } n \to \infty`} />
+          </div>
+          <div className="my-4">
+            <MarkovDiagram
+              states={[
+                { id: 'L', label: 'L', color: '#ef4444' },
+                { id: 'M', label: 'M', color: '#f59e0b' },
+                { id: 'U', label: 'U', color: '#10b981' },
+              ]}
+              transitions={[
+                { from: 'L', to: 'L', prob: 0.7, label: '0.7' },
+                { from: 'L', to: 'M', prob: 0.2, label: '0.2' },
+                { from: 'L', to: 'U', prob: 0.1, label: '0.1' },
+                { from: 'M', to: 'L', prob: 0.3, label: '0.3' },
+                { from: 'M', to: 'M', prob: 0.5, label: '0.5' },
+                { from: 'M', to: 'U', prob: 0.2, label: '0.2' },
+                { from: 'U', to: 'L', prob: 0.1, label: '0.1' },
+                { from: 'U', to: 'M', prob: 0.3, label: '0.3' },
+                { from: 'U', to: 'U', prob: 0.6, label: '0.6' },
+              ]}
+              layout="circle"
+              width={420}
+              height={300}
+            />
           </div>
           <p className="text-slate-300 mb-3">
             <strong className="text-amber-300">No matter how rich or poor a family starts</strong>, in the long run,
@@ -1368,6 +1424,26 @@ export default function RegularMC() {
           </p>
           <div className="math-block">
             <BlockMath math={String.raw`P = \begin{pmatrix} 0 & 0.9 & 0.1 \\ 0.1 & 0 & 0.9 \\ 0.8 & 0.2 & 0 \end{pmatrix} \quad \text{(H, O, G)}`} />
+          </div>
+          <div className="my-4">
+            <MarkovDiagram
+              states={[
+                { id: 'H', label: 'H', color: '#6366f1' },
+                { id: 'O', label: 'O', color: '#f59e0b' },
+                { id: 'G', label: 'G', color: '#10b981' },
+              ]}
+              transitions={[
+                { from: 'H', to: 'O', prob: 0.9, label: '0.9' },
+                { from: 'H', to: 'G', prob: 0.1, label: '0.1' },
+                { from: 'O', to: 'H', prob: 0.1, label: '0.1' },
+                { from: 'O', to: 'G', prob: 0.9, label: '0.9' },
+                { from: 'G', to: 'H', prob: 0.8, label: '0.8' },
+                { from: 'G', to: 'O', prob: 0.2, label: '0.2' },
+              ]}
+              layout="circle"
+              width={420}
+              height={300}
+            />
           </div>
           <p className="text-slate-300 mb-2">
             Since <InlineMath math="P^2" /> has all positive entries, <InlineMath math="P" /> is regular.
