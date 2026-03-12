@@ -1402,6 +1402,66 @@ export default function RegularMC() {
 
       {/* ─── Section 5: Stationary Distribution ─── */}
       <Section title="Computing the Stationary Distribution" id="stationary" color="from-emerald-400 to-green-400">
+
+        {/* ─── Intuitive Guide ─── */}
+        <div className="definition-box mb-6">
+          <h4 className="text-lg font-bold text-emerald-400 mb-3">What Does the Stationary Distribution Actually Mean?</h4>
+          <p className="text-slate-300 mb-3">
+            The stationary distribution <InlineMath math={String.raw`\boldsymbol{\pi} = (\pi_1, \pi_2, \ldots, \pi_n)`} /> assigns a number to each state.
+            Each <InlineMath math="\pi_i" /> represents the <strong className="text-emerald-300">long-run fraction of time</strong> the chain spends in state <InlineMath math="i" />.
+          </p>
+
+          <div className="bg-slate-800/60 rounded-xl p-5 mb-4">
+            <p className="text-slate-200 font-semibold mb-2">A Concrete Example: Weather</p>
+            <p className="text-slate-300 mb-2">Suppose the states are: 1 = Sunny, 2 = Cloudy, 3 = Rainy, and the stationary distribution is:</p>
+            <div className="math-block !my-2">
+              <BlockMath math={String.raw`\boldsymbol{\pi} = (0.5,\; 0.3,\; 0.2)`} />
+            </div>
+            <p className="text-slate-300">This simply means: in the long run, about <strong className="text-emerald-300">50%</strong> of days are sunny, <strong className="text-blue-300">30%</strong> are cloudy, and <strong className="text-indigo-300">20%</strong> are rainy.</p>
+          </div>
+
+          <p className="text-slate-200 font-semibold mb-2">Two Ways to Read <InlineMath math="\pi_i" /></p>
+          <div className="grid sm:grid-cols-2 gap-3 mb-4">
+            <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700">
+              <p className="text-emerald-400 font-semibold text-sm mb-1">Reading 1: Long-run proportion</p>
+              <p className="text-slate-300 text-sm">
+                <InlineMath math="\pi_i" /> is the fraction of time the system spends in state <InlineMath math="i" /> over a very long run.
+                Think of someone wandering between rooms — <InlineMath math="\pi_i" /> is how much of their life they spend in room <InlineMath math="i" />.
+              </p>
+            </div>
+            <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700">
+              <p className="text-emerald-400 font-semibold text-sm mb-1">Reading 2: Equilibrium probability</p>
+              <p className="text-slate-300 text-sm">
+                Once the system has reached steady state, <InlineMath math="\pi_i" /> is the probability of finding it in state <InlineMath math="i" /> at any given moment.
+              </p>
+            </div>
+          </div>
+
+          <p className="text-slate-200 font-semibold mb-2">Why "Stationary"?</p>
+          <p className="text-slate-300 mb-3">
+            Because <InlineMath math="\boldsymbol{\pi}" /> satisfies <InlineMath math="\boldsymbol{\pi}P = \boldsymbol{\pi}" />.
+            If today's overall distribution across states is <InlineMath math="\boldsymbol{\pi}" />,
+            then after one transition tomorrow's distribution is <strong className="text-slate-200">still</strong> <InlineMath math="\boldsymbol{\pi}" />.
+            Individual trajectories keep jumping around, but the <em>overall proportions</em> no longer change — the distribution is stationary.
+          </p>
+
+          <p className="text-slate-200 font-semibold mb-2">Connection to Regular Chains</p>
+          <p className="text-slate-300 mb-3">
+            For a <strong className="text-yellow-300">regular</strong> chain, no matter which state you start from,
+            the distribution always converges to the <em>same unique</em> <InlineMath math="\boldsymbol{\pi}" />.
+            So <InlineMath math="\boldsymbol{\pi}" /> truly acts as the "final destination" of the system.
+          </p>
+
+          <div className="mt-3 p-3 bg-amber-900/20 rounded-lg border border-amber-700/40">
+            <p className="text-amber-300 text-sm"><strong>Subtle point:</strong> Saying
+              "<InlineMath math="\pi_i" /> is the probability of being in state <InlineMath math="i" /> as <InlineMath math="n \to \infty" />"
+              is correct for regular chains, but not the <em>definition</em>.
+              The definition is <InlineMath math="\boldsymbol{\pi}P = \boldsymbol{\pi}" /> with <InlineMath math="\sum \pi_i = 1" />.
+              The "long-run proportion" interpretation requires the chain to be irreducible and aperiodic (which regular chains are).
+            </p>
+          </div>
+        </div>
+
         <p className="text-slate-300 mb-4">
           To find <InlineMath math="\boldsymbol{\pi}" />, we solve the system of linear equations{' '}
           <InlineMath math="\boldsymbol{\pi} P = \boldsymbol{\pi}" /> subject to{' '}
