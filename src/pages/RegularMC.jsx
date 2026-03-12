@@ -1320,21 +1320,43 @@ export default function RegularMC() {
             Let <InlineMath math="P" /> be a <strong className="text-yellow-300">regular</strong> transition matrix
             with state space <InlineMath math="\{0, 1, \ldots, N\}" />. Then:
           </p>
-          <div className="math-block mb-4">
+          <div className="math-block mb-2">
             <BlockMath math={String.raw`P^{(n)}_{ij} \to \pi_j > 0 \quad \text{as } n \to \infty \quad \forall\, i, j`} />
           </div>
-          <div className="math-block mb-4">
+          <p className="text-slate-400 text-sm mb-4 pl-4 border-l-2 border-slate-700">
+
+            <strong className="text-slate-300">In plain English:</strong> No matter which state <InlineMath math="i" /> you start from,
+            after enough steps the probability of being at state <InlineMath math="j" /> converges to the same fixed value <InlineMath math="\pi_j" />.
+            In other words, <strong className="text-slate-300">the starting point doesn't matter</strong> — run the chain long enough and it "forgets" where it began.
+          </p>
+          <div className="math-block mb-2">
             <BlockMath math={String.raw`P(X_n = j) \to \pi_j > 0 \quad \text{as } n \to \infty`} />
           </div>
+          <p className="text-slate-400 text-sm mb-4 pl-4 border-l-2 border-slate-700">
+
+            <strong className="text-slate-300">In plain English:</strong> After a long time, the probability of being in state <InlineMath math="j" /> settles
+            at <InlineMath math="\pi_j" /> and stops changing. The system has reached a <strong className="text-slate-300">steady state</strong>.
+          </p>
           <p className="text-slate-300 mb-3">
             where <InlineMath math={String.raw`(\pi_0, \pi_1, \ldots, \pi_N)`} /> is the <strong className="text-yellow-300">unique</strong> solution to:
           </p>
           <div className="math-block mb-2">
             <BlockMath math={String.raw`\pi_j = \sum_{k=0}^{N} \pi_k \, P_{kj} \quad \text{for all } j \qquad (\text{i.e., } \boldsymbol{\pi} P = \boldsymbol{\pi})`} />
           </div>
-          <div className="math-block mb-4">
+          <p className="text-slate-400 text-sm mb-4 pl-4 border-l-2 border-slate-700">
+
+            <strong className="text-slate-300">In plain English:</strong> If the system is already in steady state (probabilities are <InlineMath math="\pi" />),
+            then after one more step the probabilities <strong className="text-slate-300">stay exactly the same</strong> — still <InlineMath math="\pi" />.
+            Think of a river reaching flat ground: the water level stops rising and falling. That's why it's called the "<strong className="text-slate-300">stationary</strong> distribution."
+          </p>
+          <div className="math-block mb-2">
             <BlockMath math={String.raw`\sum_{i=0}^{N} \pi_i = 1, \quad \pi_i > 0 \;\; \forall\, i`} />
           </div>
+          <p className="text-slate-400 text-sm mb-4 pl-4 border-l-2 border-slate-700">
+
+            <strong className="text-slate-300">In plain English:</strong> <InlineMath math="\pi" /> is a valid probability distribution (sums to 1),
+            and <strong className="text-slate-300">every state gets a positive share</strong> — no state is "forgotten forever."
+          </p>
 
           <div className="mt-4 p-4 bg-yellow-900/20 rounded-lg border border-yellow-700/50">
             <p className="text-yellow-300 font-bold mb-2">Three-fold Implication:</p>
