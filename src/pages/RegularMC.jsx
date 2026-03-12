@@ -922,7 +922,8 @@ function SpaceTimeDemo() {
   const singleRef = useRef(null)
   const canvasRef = useRef(null)
 
-  const NUM_CHAINS = 200
+  const [numChains, setNumChains] = useState(200)
+  const NUM_CHAINS = numChains
 
   const reset = () => {
     setRunning(false)
@@ -1043,24 +1044,54 @@ function SpaceTimeDemo() {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="example-box">
       <h3 className="text-xl font-bold text-cyan-400 mb-3">Space Average vs Time Average</h3>
-      <p className="text-slate-300 mb-2">
-        <span className="text-blue-400 font-semibold">Space average</span>: At time n, the fraction of
-        {' '}{NUM_CHAINS} independent copies in state 0.
-      </p>
-      <p className="text-slate-300 mb-4">
-        <span className="text-pink-400 font-semibold">Time average</span>: For one single chain, the fraction
-        of time spent in state 0 up to step n.
-      </p>
-      <p className="text-slate-300 mb-4">
-        Both converge to <InlineMath math={String.raw`\pi_0 \approx 0.528`} /> as <InlineMath math="n \to \infty" />.
+      <p className="text-slate-300 mb-3">
+        There are <strong className="text-slate-200">two different ways</strong> to observe that a Markov chain converges to <InlineMath math="\pi_0 \approx 0.528" />. This demo runs both simultaneously so you can compare.
       </p>
 
-      <div className="flex gap-3 mb-4">
+      <div className="grid sm:grid-cols-2 gap-3 mb-4">
+        <div className="p-3 bg-blue-900/20 rounded-lg border border-blue-700/50">
+          <p className="text-blue-400 font-bold mb-1">Blue line: Space Average</p>
+          <p className="text-slate-300 text-sm mb-2">
+            Imagine <strong className="text-slate-200">{NUM_CHAINS} people</strong> each independently running their own copy of the chain.
+            At each step <InlineMath math="n" />, we take a <strong className="text-slate-200">snapshot</strong> and count: what fraction of these {NUM_CHAINS} copies are in state 0 right now?
+          </p>
+          <p className="text-slate-400 text-xs">
+            This line is <strong>noisy</strong> because each snapshot is a fresh random sample — like polling {NUM_CHAINS} people.
+            With {NUM_CHAINS} samples, the standard error is about <InlineMath math={String.raw`\sqrt{\pi_0(1-\pi_0)/${NUM_CHAINS}} \approx ${(Math.sqrt(0.528*0.472/NUM_CHAINS)*100).toFixed(1)}\%`} />.
+            Try increasing the number of copies below to see the line smooth out.
+          </p>
+        </div>
+        <div className="p-3 bg-pink-900/20 rounded-lg border border-pink-700/50">
+          <p className="text-pink-400 font-bold mb-1">Pink line: Time Average</p>
+          <p className="text-slate-300 text-sm mb-2">
+            <strong className="text-slate-200">One single chain</strong> runs for many steps.
+            At step <InlineMath math="n" />, we compute: out of all <InlineMath math="n" /> steps so far, what fraction were spent in state 0?
+          </p>
+          <p className="text-slate-400 text-xs">
+            This line is <strong>smooth</strong> because it's a <em>cumulative</em> average — each new step barely changes the running total,
+            so the line gets smoother and smoother over time.
+          </p>
+        </div>
+      </div>
+
+      <p className="text-slate-300 mb-4 text-sm">
+        <strong className="text-yellow-400">Key insight:</strong> Both lines converge to the same value <InlineMath math={String.raw`\pi_0 \approx 0.528`} />,
+        but for <em>different reasons</em>. The space average uses the <strong className="text-slate-200">Limit Theorem</strong> (distribution converges),
+        while the time average uses the <strong className="text-slate-200">Law of Large Numbers</strong> for Markov chains (empirical frequency converges).
+      </p>
+
+      <div className="flex flex-wrap gap-3 mb-4 items-center">
         <button onClick={() => setRunning(!running)} className={`${running ? 'btn-secondary' : 'btn-primary'} text-sm !px-4 !py-2`}>
           {running ? 'Pause' : 'Start'}
         </button>
         <button onClick={reset} className="btn-secondary text-sm !px-4 !py-2">Reset</button>
-        <span className="text-sm text-slate-400 self-center">Step: <span className="text-amber-400 font-mono">{step}</span></span>
+        <span className="text-sm text-slate-400">Step: <span className="text-amber-400 font-mono">{step}</span></span>
+        <label className="flex items-center gap-2 text-sm text-slate-300 ml-auto">
+          <span>Copies: {NUM_CHAINS}</span>
+          <input type="range" min="50" max="2000" step="50" value={numChains}
+            onChange={e => { setNumChains(+e.target.value); reset() }}
+            className="w-28 accent-cyan-500" />
+        </label>
       </div>
 
       <div className="bg-slate-800/40 rounded-xl border border-slate-700 overflow-hidden">
