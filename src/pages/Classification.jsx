@@ -1239,6 +1239,18 @@ export default function Classification() {
           We now develop the fundamental concepts for analyzing the structure of a Markov chain:
           which states can reach which, how states group together, and whether the chain returns to a state.
         </p>
+        <div className="bg-purple-900/20 rounded-xl p-5 border border-purple-700/40">
+          <p className="text-purple-300 font-semibold mb-2">The Big Picture</p>
+          <p className="text-slate-300 mb-3">
+            Classification is about labeling each state by its "long-term fate." For every state, we ask:
+          </p>
+          <ol className="text-slate-300 space-y-1 list-decimal list-inside text-sm">
+            <li><strong className="text-slate-200">Who can it reach?</strong> (accessibility)</li>
+            <li><strong className="text-slate-200">Who can it talk to and hear back from?</strong> (communication)</li>
+            <li><strong className="text-slate-200">If it leaves, will it come back?</strong> (recurrent vs transient)</li>
+            <li><strong className="text-slate-200">Does it come back on a fixed rhythm?</strong> (periodic vs aperiodic)</li>
+          </ol>
+        </div>
       </motion.div>
 
       {/* Accessibility */}
@@ -1248,9 +1260,15 @@ export default function Classification() {
           State <InlineMath math="j" /> is <strong>accessible</strong> from state <InlineMath math="i" />,
           written <InlineMath math="i \to j" />, if <InlineMath math="P_{ij}^{(k)} > 0" /> for some <InlineMath math="k > 0" />.
         </p>
-        <p className="text-slate-300 mb-3">
+        <p className="text-slate-400 text-sm mb-3 pl-4 border-l-2 border-slate-700">
+          <strong className="text-slate-300">In plain English:</strong> Starting from <InlineMath math="i" />, there is some path (possibly through other states) that reaches <InlineMath math="j" /> with positive probability. It doesn't have to be a direct jump — any number of steps is fine.
+        </p>
+        <p className="text-slate-300 mb-2">
           States <InlineMath math="i" /> and <InlineMath math="j" /> <strong>communicate</strong>, written <InlineMath math="i \leftrightarrow j" />,
           if <InlineMath math="i \to j" /> AND <InlineMath math="j \to i" />.
+        </p>
+        <p className="text-slate-400 text-sm mb-3 pl-4 border-l-2 border-slate-700">
+          <strong className="text-slate-300">In plain English:</strong> Two states communicate if you can travel from either one to the other <em>and come back</em>. It's a two-way relationship — like two cities connected by roads in both directions.
         </p>
 
         <div className="math-block">
@@ -1258,9 +1276,26 @@ export default function Classification() {
           <BlockMath math={String.raw`\text{Reflexive: } i \leftrightarrow i \qquad \text{Symmetric: } i \leftrightarrow j \implies j \leftrightarrow i`} />
           <BlockMath math={String.raw`\text{Transitive: } i \leftrightarrow j \text{ and } j \leftrightarrow k \implies i \leftrightarrow k`} />
         </div>
-        <p className="text-slate-300">
-          This partitions the state space into <strong>communicating classes</strong>.
+        <p className="text-slate-300 mb-3">
+          This partitions the state space into <strong>communicating classes</strong> — groups of states that can all reach each other.
         </p>
+
+        <div className="grid sm:grid-cols-2 gap-3 mt-3">
+          <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700">
+            <p className="text-blue-400 font-semibold text-sm mb-1">Closed Class</p>
+            <p className="text-slate-300 text-sm">
+              A communicating class is <strong>closed</strong> if no state in it can reach any state outside it.
+              Once you enter, you never leave — like a room with no exit.
+            </p>
+          </div>
+          <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700">
+            <p className="text-blue-400 font-semibold text-sm mb-1">Absorbing State</p>
+            <p className="text-slate-300 text-sm">
+              A state <InlineMath math="i" /> with <InlineMath math="P_{ii} = 1" /> is <strong>absorbing</strong>.
+              It's a closed class of size 1 — a terminal station. Once there, you stay forever.
+            </p>
+          </div>
+        </div>
       </motion.div>
 
       {/* Example 4.8 detail */}
@@ -1294,8 +1329,11 @@ export default function Classification() {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="definition-box">
         <h3 className="text-xl font-bold text-blue-400 mb-2">Irreducible Markov Chains</h3>
         <p className="text-slate-300 mb-2">
-          A Markov chain is <strong>irreducible</strong> if all states communicate with each other -- there is only one communicating class
+          A Markov chain is <strong>irreducible</strong> if all states communicate with each other — there is only one communicating class
           (the entire state space).
+        </p>
+        <p className="text-slate-400 text-sm mb-3 pl-4 border-l-2 border-slate-700">
+          <strong className="text-slate-300">In plain English:</strong> You can get from <em>anywhere</em> to <em>anywhere</em>. There are no "one-way doors" that trap you in a subset of states. The whole chain is one big connected community.
         </p>
         <p className="text-slate-300">
           Every regular MC is irreducible, but an irreducible MC need not be regular (it could be periodic).
@@ -1311,9 +1349,18 @@ export default function Classification() {
         <div className="math-block">
           <BlockMath math={String.raw`d(i) = \gcd\{n \ge 1 : P_{ii}^{(n)} > 0\}`} />
         </div>
+        <p className="text-slate-400 text-sm mb-3 pl-4 border-l-2 border-slate-700">
+          <strong className="text-slate-300">In plain English:</strong> The period is the "rhythm" of a state's self-returns.
+          If the chain can only return to state <InlineMath math="i" /> at steps 3, 6, 9, 12, … then the period is 3 — like a bus that only comes every 3 minutes.
+          A period of 1 (aperiodic) means there's no forced rhythm; the chain can return at irregular times, which is what we need for convergence.
+        </p>
         <p className="text-slate-300 mb-2">
           If <InlineMath math="d(i) = 1" />, the state is <strong>aperiodic</strong>. If <InlineMath math="d(i) > 1" />, the state is
           <strong> periodic</strong> with period <InlineMath math="d(i)" />.
+        </p>
+        <p className="text-slate-400 text-sm mb-3 pl-4 border-l-2 border-slate-700">
+          <strong className="text-slate-300">Quick test for aperiodicity:</strong> If a state has a self-loop (<InlineMath math="P_{ii} > 0" />),
+          it is automatically aperiodic — you can return in 1 step, and <InlineMath math={String.raw`\gcd(\ldots, 1) = 1`} /> always.
         </p>
         <p className="text-slate-300">
           Example: If <InlineMath math="P_{01}=P_{12}=P_{23}=P_{30}=1" /> (deterministic cycle), then all states have period 4.
@@ -1328,12 +1375,15 @@ export default function Classification() {
         <ol className="text-slate-300 space-y-2 list-decimal list-inside">
           <li>
             If <InlineMath math="k" /> is not a multiple of <InlineMath math="d(i)" />, then <InlineMath math="P_{ii}^{(k)} = 0" />.
+            <span className="text-slate-400 text-sm"> — The chain can <em>only</em> return on steps that match its rhythm.</span>
           </li>
           <li>
             <InlineMath math="P_{ii}^{(n)} > 0" /> for all sufficiently large <InlineMath math="n" /> that are multiples of <InlineMath math="d(i)" />.
+            <span className="text-slate-400 text-sm"> — Eventually, every "on-beat" step gives a positive chance of return.</span>
           </li>
           <li>
             If <InlineMath math="i \leftrightarrow j" />, then <InlineMath math="d(i) = d(j)" />. Communicating states share the same period.
+            <span className="text-slate-400 text-sm"> — Period is a property of the whole class, not individual states.</span>
           </li>
         </ol>
       </motion.div>
@@ -1373,8 +1423,27 @@ export default function Classification() {
             State <InlineMath math="i" /> is <strong className="text-red-400">transient</strong> if <InlineMath math="f_{ii} < 1" /> (may never return).
           </li>
         </ul>
+        <div className="mt-4 p-4 rounded-lg bg-slate-800/60 border border-slate-700">
+          <p className="text-slate-300 text-sm mb-2">
+            <strong className="text-emerald-400">Recurrent</strong> = "You will <em>definitely</em> come back."
+            No matter how far you wander, you are guaranteed to revisit this state. Think of it like your home — you always return eventually.
+          </p>
+          <p className="text-slate-300 text-sm mb-2">
+            <strong className="text-red-400">Transient</strong> = "You <em>might</em> leave and never return."
+            Each time you leave, there's a positive probability of never coming back. Like a tourist visiting a city — you might revisit, but nothing guarantees it.
+          </p>
+          <p className="text-slate-300 text-sm">
+            <strong className="text-slate-400">Key consequence:</strong> A recurrent state is visited infinitely often (you keep coming back forever).
+            A transient state is visited only finitely many times — eventually the chain leaves and never returns.
+          </p>
+        </div>
         <p className="text-slate-300 mt-3">
           Let <InlineMath math="M" /> = total number of visits to state <InlineMath math="i" />. Then <InlineMath math="P(M \ge k \mid X_0 = i) = f_{ii}^k" />.
+        </p>
+        <p className="text-slate-400 text-sm mt-1 pl-4 border-l-2 border-slate-700">
+          <strong className="text-slate-300">In plain English:</strong> For a transient state with <InlineMath math="f_{ii} = 0.8" />,
+          the probability of returning at least 10 times is <InlineMath math="0.8^{10} \approx 0.107" /> — it drops exponentially.
+          For a recurrent state, <InlineMath math="1^k = 1" /> for all <InlineMath math="k" />, so infinite visits are guaranteed.
         </p>
       </motion.div>
 
@@ -1383,22 +1452,122 @@ export default function Classification() {
         <h3 className="text-xl font-bold text-yellow-400 mb-3">Theorem 4.2 (Equivalence of Recurrence)</h3>
         <p className="text-slate-300 mb-2">The following are equivalent:</p>
         <ol className="text-slate-300 space-y-2 list-[lower-alpha] list-inside mb-3">
-          <li>State <InlineMath math="i" /> is recurrent (i.e., <InlineMath math="f_{ii} = 1" />).</li>
-          <li><InlineMath math="P(M = \infty \mid X_0 = i) = 1" /> (the chain visits <InlineMath math="i" /> infinitely often).</li>
-          <li><InlineMath math={String.raw`\sum_{n=1}^{\infty} P_{ii}^{(n)} = \infty`} /> (the expected number of visits is infinite).</li>
+          <li>
+            State <InlineMath math="i" /> is recurrent (i.e., <InlineMath math="f_{ii} = 1" />).
+            <span className="text-slate-400 text-sm"> — guaranteed to return</span>
+          </li>
+          <li>
+            <InlineMath math="P(M = \infty \mid X_0 = i) = 1" /> (the chain visits <InlineMath math="i" /> infinitely often).
+            <span className="text-slate-400 text-sm"> — and therefore keeps returning forever</span>
+          </li>
+          <li>
+            <InlineMath math={String.raw`\sum_{n=1}^{\infty} P_{ii}^{(n)} = \infty`} /> (the expected number of visits is infinite).
+            <span className="text-slate-400 text-sm"> — the transition probabilities "add up" to infinity</span>
+          </li>
         </ol>
+        <p className="text-slate-400 text-sm mb-3 pl-4 border-l-2 border-slate-700">
+          <strong className="text-slate-300">Why this matters:</strong> Condition (c) is the most practical — you can check recurrence by computing
+          a series, without tracking first-return probabilities. If the series diverges, the state is recurrent. If it converges, transient.
+        </p>
         <p className="text-slate-300 mb-2">For transient states:</p>
         <div className="math-block">
           <BlockMath math={String.raw`E[M \mid X_0 = i] = \frac{f_{ii}}{1 - f_{ii}}`} />
         </div>
+        <p className="text-slate-400 text-sm mt-1 mb-3 pl-4 border-l-2 border-slate-700">
+          <strong className="text-slate-300">Example:</strong> If <InlineMath math="f_{ii} = 0.9" />, the expected number of returns
+          is <InlineMath math="0.9 / 0.1 = 9" />. High return probability still means finitely many visits — just more of them on average.
+        </p>
         <p className="text-slate-300 mt-2">
           <strong>Corollary:</strong> If <InlineMath math="i \leftrightarrow j" />, then <InlineMath math="i" /> and <InlineMath math="j" /> are
           either both recurrent or both transient. Recurrence/transience is a class property.
+        </p>
+        <p className="text-slate-400 text-sm mt-1 pl-4 border-l-2 border-slate-700">
+          <strong className="text-slate-300">In plain English:</strong> States that communicate share the same fate.
+          If one state in a class is recurrent, they all are — you can't have a "permanent" state next to a "temporary" one in the same community.
         </p>
       </motion.div>
 
       {/* Recurrence demo */}
       <RecurrenceDemo />
+
+      {/* Positive Recurrent vs Null Recurrent */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.62 }} className="definition-box">
+        <h3 className="text-xl font-bold text-blue-400 mb-3">Positive Recurrent vs. Null Recurrent</h3>
+        <p className="text-slate-300 mb-2">
+          For a recurrent state <InlineMath math="i" />, let <InlineMath math={String.raw`\mu_i = E[T_i \mid X_0 = i]`} /> be the <strong>mean return time</strong>.
+        </p>
+        <ul className="text-slate-300 space-y-2 mb-3">
+          <li>
+            <strong className="text-emerald-400">Positive recurrent:</strong> <InlineMath math={String.raw`\mu_i < \infty`} />
+            — the chain returns in finite expected time.
+          </li>
+          <li>
+            <strong className="text-amber-400">Null recurrent:</strong> <InlineMath math={String.raw`\mu_i = \infty`} />
+            — the chain is guaranteed to return, but the expected waiting time is infinite.
+          </li>
+        </ul>
+        <div className="p-4 rounded-lg bg-slate-800/60 border border-slate-700">
+          <p className="text-slate-300 text-sm mb-2">
+            <strong className="text-emerald-400">Positive recurrent</strong> = "You'll come back, and it won't take forever on average."
+            This is the good case — the state has a well-defined long-run frequency <InlineMath math={String.raw`\pi_i = 1/\mu_i > 0`} />.
+          </p>
+          <p className="text-slate-300 text-sm mb-2">
+            <strong className="text-amber-400">Null recurrent</strong> = "You'll definitely come back… but on average it takes infinitely long."
+            The long-run frequency is <InlineMath math={String.raw`\pi_i = 1/\mu_i = 0`} /> — the state is visited infinitely often but so sparsely that its proportion vanishes.
+          </p>
+          <p className="text-slate-300 text-sm">
+            <strong className="text-slate-400">Finite state spaces:</strong> Null recurrence <em>cannot happen</em> in a finite-state Markov chain.
+            If the state space is finite, every recurrent state is automatically positive recurrent. Null recurrence only arises in infinite chains (e.g., symmetric random walk on the integers).
+          </p>
+        </div>
+      </motion.div>
+
+      {/* Practical Classification Framework */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.63 }}
+        className="p-5 rounded-xl border border-purple-500/30 bg-purple-500/5"
+      >
+        <h3 className="text-xl font-bold text-purple-400 mb-3">Practical Classification Guide (Finite Chains)</h3>
+        <p className="text-slate-300 text-sm mb-3">
+          For <strong>finite-state</strong> Markov chains (which is most of what you'll see in exams), the classification simplifies considerably:
+        </p>
+        <div className="space-y-3">
+          <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/40">
+            <span className="text-2xl">1</span>
+            <div>
+              <p className="text-purple-300 font-semibold text-sm">Find the communicating classes</p>
+              <p className="text-slate-400 text-sm">Group states by mutual accessibility. States <InlineMath math="i" /> and <InlineMath math="j" /> are in the same class iff <InlineMath math="i \to j" /> and <InlineMath math="j \to i" />.</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/40">
+            <span className="text-2xl">2</span>
+            <div>
+              <p className="text-purple-300 font-semibold text-sm">Identify closed classes</p>
+              <p className="text-slate-400 text-sm">A class is closed if no state in it has a transition leading outside. In a finite chain, <strong>every closed class is recurrent</strong>.</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/40">
+            <span className="text-2xl">3</span>
+            <div>
+              <p className="text-purple-300 font-semibold text-sm">Non-closed classes are transient</p>
+              <p className="text-slate-400 text-sm">If a class has an "exit" to another class, it is transient. The chain will eventually leave and never come back.</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/40">
+            <span className="text-2xl">4</span>
+            <div>
+              <p className="text-purple-300 font-semibold text-sm">Check periodicity within each class</p>
+              <p className="text-slate-400 text-sm">Compute <InlineMath math={String.raw`d = \gcd\{n : P_{ii}^{(n)} > 0\}`} /> for any state in the class. If <InlineMath math="d = 1" />, the class is aperiodic. Self-loops guarantee aperiodicity.</p>
+            </div>
+          </div>
+        </div>
+        <div className="mt-4 p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+          <p className="text-purple-300 font-semibold text-sm mb-1">Bottom Line for Finite Chains</p>
+          <p className="text-slate-300 text-sm">
+            Closed class = recurrent (and automatically positive recurrent). Non-closed class = transient.
+            An irreducible finite chain is always recurrent. If it's also aperiodic, it's a <strong>regular</strong> chain and the limit theorem applies.
+          </p>
+        </div>
+      </motion.div>
 
       {/* Summary */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65 }} className="section-card">
@@ -1438,10 +1607,20 @@ export default function Classification() {
                 <td className="py-2 px-3"><InlineMath math="f_{ii} = 1" /> or <InlineMath math={String.raw`\sum P_{ii}^{(n)} = \infty`} /></td>
                 <td className="py-2 px-3">Yes (Corollary)</td>
               </tr>
-              <tr>
+              <tr className="border-b border-slate-800">
                 <td className="py-2 px-3 font-semibold text-red-400">Transient</td>
                 <td className="py-2 px-3"><InlineMath math="f_{ii} < 1" /> or <InlineMath math={String.raw`\sum P_{ii}^{(n)} < \infty`} /></td>
                 <td className="py-2 px-3">Yes (Corollary)</td>
+              </tr>
+              <tr className="border-b border-slate-800">
+                <td className="py-2 px-3 font-semibold text-emerald-400">Positive recurrent</td>
+                <td className="py-2 px-3">Recurrent with <InlineMath math={String.raw`\mu_i = E[T_i] < \infty`} /></td>
+                <td className="py-2 px-3">Yes</td>
+              </tr>
+              <tr>
+                <td className="py-2 px-3 font-semibold text-amber-400">Null recurrent</td>
+                <td className="py-2 px-3">Recurrent with <InlineMath math={String.raw`\mu_i = \infty`} /> (infinite state space only)</td>
+                <td className="py-2 px-3">Yes</td>
               </tr>
             </tbody>
           </table>
@@ -1452,13 +1631,29 @@ export default function Classification() {
       <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
         className="p-5 rounded-xl border border-amber-500/30 bg-amber-500/5"
       >
-        <h4 className="text-amber-400 font-bold mb-3">Key Takeaway</h4>
+        <h4 className="text-amber-400 font-bold mb-3">Key Takeaway — Four Word Pairs to Remember</h4>
+        <div className="grid sm:grid-cols-2 gap-3 mb-4">
+          <div className="p-3 rounded-lg bg-slate-800/40">
+            <p className="text-amber-300 font-semibold text-sm mb-1">Accessible vs. Communicate</p>
+            <p className="text-slate-400 text-sm">One-way reachability vs. two-way reachability. Communication is what defines classes.</p>
+          </div>
+          <div className="p-3 rounded-lg bg-slate-800/40">
+            <p className="text-amber-300 font-semibold text-sm mb-1">Closed vs. Not Closed (Class)</p>
+            <p className="text-slate-400 text-sm">Can you escape the class? Closed = no exit = recurrent. Not closed = has an exit = transient.</p>
+          </div>
+          <div className="p-3 rounded-lg bg-slate-800/40">
+            <p className="text-amber-300 font-semibold text-sm mb-1">Periodic vs. Aperiodic</p>
+            <p className="text-slate-400 text-sm">Does the chain have a forced rhythm? Aperiodic = no forced cycle = can converge to a steady state.</p>
+          </div>
+          <div className="p-3 rounded-lg bg-slate-800/40">
+            <p className="text-amber-300 font-semibold text-sm mb-1">Recurrent vs. Transient</p>
+            <p className="text-slate-400 text-sm">Guaranteed to return vs. might leave forever. Determines the long-run behavior of the chain.</p>
+          </div>
+        </div>
         <p className="text-slate-300 leading-relaxed">
-          State classification provides the structural foundation for understanding any Markov chain.
-          <strong className="text-amber-300"> Communication classes</strong> partition states into groups that talk to each other.
-          <strong className="text-amber-300"> Periodicity</strong> determines whether the chain can settle down or must cycle.
-          <strong className="text-amber-300"> Recurrence vs. transience</strong> tells us whether the chain revisits a state infinitely often or eventually leaves forever.
-          Together, these concepts explain why the limit theorem works for regular chains and what can go wrong otherwise.
+          Together, these concepts explain why the limit theorem works for regular chains: the chain must be irreducible (single communicating class),
+          aperiodic (no cycling), and recurrent (keeps revisiting states). For finite chains: irreducible + aperiodic = regular, and the stationary
+          distribution <InlineMath math={String.raw`\pi`} /> gives the long-run proportions.
         </p>
       </motion.div>
 
