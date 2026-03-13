@@ -1049,7 +1049,10 @@ function RecurrenceDemo() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }} className="example-box">
-      <h3 className="text-xl font-bold text-rose-400 mb-2">Recurrence vs Transience: Return Visits</h3>
+      <div className="flex items-center gap-2 mb-2">
+        <h3 className="text-xl font-bold text-rose-400">Recurrence vs Transience: Return Visits</h3>
+        <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30">Supplementary</span>
+      </div>
       <p className="text-slate-300 mb-3">
         For a transient state with return probability <InlineMath math="f_{ii} < 1" />, the total visits <InlineMath math="M" /> follows a geometric distribution:
         <InlineMath math={String.raw`\;P(M \ge k) = f_{ii}^k`} /> and <InlineMath math={String.raw`E[M] = \frac{f_{ii}}{1-f_{ii}}`} />.
@@ -1407,7 +1410,10 @@ export default function Classification() {
 
       {/* Recurrence and Transience */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }} className="definition-box">
-        <h3 className="text-xl font-bold text-blue-400 mb-3">Recurrence and Transience</h3>
+        <div className="flex items-center gap-2 mb-3">
+          <h3 className="text-xl font-bold text-blue-400">Recurrence and Transience</h3>
+          <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30">Supplementary</span>
+        </div>
         <p className="text-slate-300 mb-2">
           Let <InlineMath math="T = \min\{n \ge 1 : X_n = i\}" /> be the <strong>first return time</strong> to state <InlineMath math="i" />.
           Define:
@@ -1449,7 +1455,10 @@ export default function Classification() {
 
       {/* Theorem 4.2 */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="theorem-box">
-        <h3 className="text-xl font-bold text-yellow-400 mb-3">Theorem 4.2 (Equivalence of Recurrence)</h3>
+        <div className="flex items-center gap-2 mb-3">
+          <h3 className="text-xl font-bold text-yellow-400">Theorem 4.2 (Equivalence of Recurrence)</h3>
+          <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30">Supplementary</span>
+        </div>
         <p className="text-slate-300 mb-2">The following are equivalent:</p>
         <ol className="text-slate-300 space-y-2 list-[lower-alpha] list-inside mb-3">
           <li>
@@ -1492,7 +1501,10 @@ export default function Classification() {
 
       {/* Positive Recurrent vs Null Recurrent */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.62 }} className="definition-box">
-        <h3 className="text-xl font-bold text-blue-400 mb-3">Positive Recurrent vs. Null Recurrent</h3>
+        <div className="flex items-center gap-2 mb-3">
+          <h3 className="text-xl font-bold text-blue-400">Positive Recurrent vs. Null Recurrent</h3>
+          <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30">Supplementary</span>
+        </div>
         <p className="text-slate-300 mb-2">
           For a recurrent state <InlineMath math="i" />, let <InlineMath math={String.raw`\mu_i = E[T_i \mid X_0 = i]`} /> be the <strong>mean return time</strong>.
         </p>
