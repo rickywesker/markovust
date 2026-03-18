@@ -26,6 +26,9 @@ const fetchWithTimeout = (url, options = {}) => {
 };
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: { lockAcquireTimeout: 5000 },
+  auth: {
+    // Bypass navigator.locks to prevent deadlock that hangs getSession() and all queries
+    lock: (_name, _timeout, fn) => fn(),
+  },
   global: { fetch: fetchWithTimeout },
 });
