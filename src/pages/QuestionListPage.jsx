@@ -36,6 +36,8 @@ export default function QuestionListPage() {
     let cancelled = false;
 
     async function load() {
+      const t0 = performance.now();
+      console.log('[Questions] load() starting...');
       setLoading(true);
       setError(null);
       try {
@@ -50,6 +52,9 @@ export default function QuestionListPage() {
 
         // Run both queries in parallel instead of sequentially
         const [questionsResult, answersResult] = await Promise.all([questionsQuery, answersQuery]);
+        console.log(`[Questions] queries done in ${(performance.now() - t0).toFixed(0)}ms — questions: ${questionsResult.data?.length ?? 'err'}, answers: ${answersResult.data?.length ?? 'err'}`);
+        if (questionsResult.error) console.error('[Questions] questions query error:', questionsResult.error);
+        if (answersResult.error) console.error('[Questions] answers query error:', answersResult.error);
 
         if (cancelled) return;
         if (questionsResult.error) throw questionsResult.error;
@@ -66,8 +71,10 @@ export default function QuestionListPage() {
         }
         setAnswered(map);
       } catch (err) {
+        console.error(`[Questions] FAILED in ${(performance.now() - t0).toFixed(0)}ms:`, err);
         if (!cancelled) setError(err.message || 'Failed to load questions.');
       } finally {
+        console.log(`[Questions] load() finished in ${(performance.now() - t0).toFixed(0)}ms`);
         if (!cancelled) setLoading(false);
       }
     }
