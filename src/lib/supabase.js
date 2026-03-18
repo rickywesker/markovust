@@ -7,9 +7,9 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY environment variables');
 }
 
-// Add 10s timeout to prevent indefinite hangs (Supabase free tier cold starts)
+// Add 10s timeout to data queries only — skip auth requests to avoid breaking navigator.locks
 const fetchWithTimeout = (url, options = {}) => {
-  if (options.signal) return fetch(url, options);
+  if (options.signal || url.includes('/auth/')) return fetch(url, options);
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 10000);
   return fetch(url, { ...options, signal: controller.signal })
@@ -17,5 +17,6 @@ const fetchWithTimeout = (url, options = {}) => {
 };
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: { lockAcquireTimeout: 5000 },
   global: { fetch: fetchWithTimeout },
 });
