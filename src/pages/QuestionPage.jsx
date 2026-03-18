@@ -16,40 +16,54 @@ export default function QuestionPage() {
   const [submitting, setSubmitting] = useState(false);
   const [prevAnswer, setPrevAnswer] = useState(null);
   const [adjacentIds, setAdjacentIds] = useState({ prev: null, next: null });
+  const [error, setError] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
+    let cancelled = false;
+
     async function load() {
       setLoading(true);
+      setError(null);
       setSubmitted(false);
       setSelected(null);
       setIsCorrect(null);
       setShowSolution(false);
       setPrevAnswer(null);
 
-      const { data } = await supabase.from('questions').select('*').eq('id', id).single();
-      setQuestion(data);
+      try {
+        // Run all 4 queries in parallel instead of sequentially
+        const [questionResult, answersResult, prevQResult, nextQResult] = await Promise.all([
+          supabase.from('questions').select('*').eq('id', id).single(),
+          supabase.from('user_answers')
+            .select('answer, is_correct')
+            .eq('user_id', user.id)
+            .eq('question_id', id)
+            .order('created_at', { ascending: false })
+            .limit(1),
+          supabase.from('questions').select('id').lt('id', id).order('id', { ascending: false }).limit(1),
+          supabase.from('questions').select('id').gt('id', id).order('id', { ascending: true }).limit(1),
+        ]);
 
-      const { data: answers } = await supabase
-        .from('user_answers')
-        .select('answer, is_correct')
-        .eq('user_id', user.id)
-        .eq('question_id', id)
-        .order('created_at', { ascending: false })
-        .limit(1);
+        if (cancelled) return;
+        if (questionResult.error) throw questionResult.error;
 
-      if (answers?.length > 0) {
-        setPrevAnswer(answers[0]);
+        setQuestion(questionResult.data);
+        if (answersResult.data?.length > 0) setPrevAnswer(answersResult.data[0]);
+        setAdjacentIds({
+          prev: prevQResult.data?.[0]?.id ?? null,
+          next: nextQResult.data?.[0]?.id ?? null,
+        });
+      } catch (err) {
+        if (!cancelled) setError(err.message || 'Failed to load question.');
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-
-      // Fetch adjacent question IDs
-      const { data: prevQ } = await supabase.from('questions').select('id').lt('id', id).order('id', { ascending: false }).limit(1);
-      const { data: nextQ } = await supabase.from('questions').select('id').gt('id', id).order('id', { ascending: true }).limit(1);
-      setAdjacentIds({ prev: prevQ?.[0]?.id ?? null, next: nextQ?.[0]?.id ?? null });
-
-      setLoading(false);
     }
     load();
-  }, [id, user.id]);
+
+    return () => { cancelled = true; };
+  }, [id, user.id, retryCount]);
 
   const choices = question ? [
     { label: 'A', text: question.choices_a },
@@ -77,6 +91,12 @@ export default function QuestionPage() {
   };
 
   if (loading) return <div className="text-slate-400 mt-8">Loading...</div>;
+  if (error) return (
+    <div className="mt-8 text-center">
+      <p className="text-red-400 mb-4">{error}</p>
+      <button onClick={() => setRetryCount(c => c + 1)} className="btn-primary">Retry</button>
+    </div>
+  );
   if (!question) return <div className="text-red-400 mt-8">Question not found.</div>;
 
   return (

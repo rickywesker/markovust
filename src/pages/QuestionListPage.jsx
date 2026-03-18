@@ -19,46 +19,76 @@ function getChapter(code) {
   return code.split('.')[0];
 }
 
+// Simple in-memory cache for questions (static data)
+let questionsCache = null;
+
 export default function QuestionListPage() {
   const { user } = useAuth();
-  const [questions, setQuestions] = useState([]);
+  const [questions, setQuestions] = useState(questionsCache || []);
   const [answered, setAnswered] = useState({});
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!questionsCache);
+  const [error, setError] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
   const [category, setCategory] = useState(0);
   const [chapter, setChapter] = useState('all');
 
   useEffect(() => {
+    let cancelled = false;
+
     async function load() {
       setLoading(true);
+      setError(null);
       try {
-        let query = supabase.from('questions').select('id, code, category, difficulty');
-        if (category > 0) query = query.eq('category', category);
-        const { data } = await query.order('code');
-        setQuestions(data || []);
+        let questionsQuery = supabase.from('questions').select('id, code, category, difficulty');
+        if (category > 0) questionsQuery = questionsQuery.eq('category', category);
+        questionsQuery = questionsQuery.order('code');
 
-        const { data: answers } = await supabase
+        const answersQuery = supabase
           .from('user_answers')
           .select('question_id, is_correct')
           .eq('user_id', user.id);
 
+        // Run both queries in parallel instead of sequentially
+        const [questionsResult, answersResult] = await Promise.all([questionsQuery, answersQuery]);
+
+        if (cancelled) return;
+        if (questionsResult.error) throw questionsResult.error;
+
+        const data = questionsResult.data || [];
+        setQuestions(data);
+        if (category === 0) questionsCache = data;
+
         const map = {};
-        for (const a of (answers || [])) {
+        for (const a of (answersResult.data || [])) {
           if (!map[a.question_id] || a.is_correct) {
             map[a.question_id] = a.is_correct;
           }
         }
         setAnswered(map);
+      } catch (err) {
+        if (!cancelled) setError(err.message || 'Failed to load questions.');
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
     load();
-  }, [category, user.id]);
+
+    return () => { cancelled = true; };
+  }, [category, user.id, retryCount]);
 
   const chapters = [...new Set(questions.map(q => getChapter(q.code)))].sort();
   const filtered = chapter === 'all' ? questions : questions.filter(q => getChapter(q.code) === chapter);
 
   if (loading) return <div className="text-slate-400 mt-8">Loading questions...</div>;
+
+  if (error) return (
+    <div className="mt-8 text-center">
+      <p className="text-red-400 mb-4">{error}</p>
+      <button onClick={() => { questionsCache = null; setRetryCount(c => c + 1); }} className="btn-primary">
+        Retry
+      </button>
+    </div>
+  );
 
   return (
     <div>

@@ -7,25 +7,44 @@ export default function ProgressPage() {
   const { user } = useAuth();
   const [answers, setAnswers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
+    let cancelled = false;
     async function load() {
-      const { data } = await supabase
-        .from('user_answers')
-        .select('id, question_id, answer, is_correct, created_at, questions(code, category)')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-      setAnswers(data || []);
-      setLoading(false);
+      setLoading(true);
+      setError(null);
+      try {
+        const { data, error: queryError } = await supabase
+          .from('user_answers')
+          .select('id, question_id, answer, is_correct, created_at, questions(code, category)')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+        if (queryError) throw queryError;
+        if (!cancelled) setAnswers(data || []);
+      } catch (err) {
+        if (!cancelled) setError(err.message || 'Failed to load progress.');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     }
     load();
-  }, [user.id]);
+    return () => { cancelled = true; };
+  }, [user.id, retryCount]);
 
   const total = answers.length;
   const correct = answers.filter(a => a.is_correct).length;
   const uniqueQuestions = new Set(answers.map(a => a.question_id)).size;
 
   if (loading) return <div className="text-slate-400 mt-8">Loading...</div>;
+
+  if (error) return (
+    <div className="mt-8 text-center">
+      <p className="text-red-400 mb-4">{error}</p>
+      <button onClick={() => setRetryCount(c => c + 1)} className="btn-primary">Retry</button>
+    </div>
+  );
 
   return (
     <div>
