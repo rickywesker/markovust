@@ -9,28 +9,22 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     let resolved = false;
-    const t0 = performance.now();
-    console.log('[Auth] starting getSession...');
 
-    // Timeout fallback: if getSession() hangs (navigator.locks deadlock), force loading to false
     const timeout = setTimeout(() => {
       if (!resolved) {
         resolved = true;
-        console.warn(`[Auth] TIMEOUT after ${(performance.now() - t0).toFixed(0)}ms — forcing loading=false`);
         setLoading(false);
       }
     }, 5000);
 
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log(`[Auth] getSession resolved in ${(performance.now() - t0).toFixed(0)}ms, user=${!!session?.user}`);
       if (!resolved) {
         resolved = true;
         clearTimeout(timeout);
         setUser(session?.user ?? null);
         setLoading(false);
       }
-    }).catch((err) => {
-      console.error(`[Auth] getSession FAILED in ${(performance.now() - t0).toFixed(0)}ms:`, err);
+    }).catch(() => {
       if (!resolved) {
         resolved = true;
         clearTimeout(timeout);
@@ -40,13 +34,20 @@ export function AuthProvider({ children }) {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log(`[Auth] onAuthStateChange: ${event} at ${(performance.now() - t0).toFixed(0)}ms`);
-        setUser(session?.user ?? null);
+        // Only clear user on explicit sign-out — ignore transient null sessions
+        // during token refresh to prevent ProtectedRoute from redirecting to /login
+        if (event === 'SIGNED_OUT') {
+          setUser(null);
+        } else if (session?.user) {
+          setUser(session.user);
+        }
+
         if (!resolved) {
           resolved = true;
           clearTimeout(timeout);
           setLoading(false);
         }
+
         if (event === 'SIGNED_IN' && session?.user) {
           const { data } = await supabase.from('profiles').select('id').eq('id', session.user.id).single();
           if (!data) {

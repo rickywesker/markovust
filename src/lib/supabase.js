@@ -7,28 +7,36 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY environment variables');
 }
 
-// Add 10s timeout to data queries — skip auth requests to avoid breaking navigator.locks
+// 10s timeout for data queries — skip auth requests to preserve token refresh
 const fetchWithTimeout = (url, options = {}) => {
-  const isAuth = url.includes('/auth/');
-  const tag = url.split('/rest/v1/')[1]?.split('?')[0] || (isAuth ? 'auth' : url.slice(-40));
-  const t0 = performance.now();
-  console.log(`[fetch] → ${tag} (hasSignal=${!!options.signal}, isAuth=${isAuth})`);
-
-  if (isAuth) return fetch(url, options).then(r => { console.log(`[fetch] ← ${tag} ${r.status} in ${(performance.now()-t0).toFixed(0)}ms`); return r; });
+  if (url.includes('/auth/')) return fetch(url, options);
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => { console.warn(`[fetch] ⏰ ${tag} TIMEOUT 10s`); controller.abort(); }, 10000);
-  // Always apply our timeout signal, even if options.signal exists
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+  // Compose signals: if the caller already has one, forward its abort to ours
+  if (options.signal) {
+    if (options.signal.aborted) controller.abort();
+    else options.signal.addEventListener('abort', () => controller.abort(), { once: true });
+  }
+
   return fetch(url, { ...options, signal: controller.signal })
-    .then(r => { console.log(`[fetch] ← ${tag} ${r.status} in ${(performance.now()-t0).toFixed(0)}ms`); return r; })
-    .catch(err => { console.error(`[fetch] ✗ ${tag} FAILED in ${(performance.now()-t0).toFixed(0)}ms:`, err.message); throw err; })
     .finally(() => clearTimeout(timeoutId));
 };
 
+// In-memory mutex to replace navigator.locks (prevents deadlock while still
+// serializing token refreshes so concurrent refreshes don't corrupt the session)
+const inMemoryLock = (() => {
+  const locks = new Map();
+  return (name, _timeout, fn) => {
+    const prev = locks.get(name) || Promise.resolve();
+    const next = prev.then(fn, fn);
+    locks.set(name, next.catch(() => {}));
+    return next;
+  };
+})();
+
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    // Bypass navigator.locks to prevent deadlock that hangs getSession() and all queries
-    lock: (_name, _timeout, fn) => fn(),
-  },
+  auth: { lock: inMemoryLock },
   global: { fetch: fetchWithTimeout },
 });

@@ -20,7 +20,9 @@ export default function QuestionPage() {
   const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
-    let cancelled = false;
+    if (!user?.id) return;
+    const controller = new AbortController();
+    const signal = controller.signal;
 
     async function load() {
       setLoading(true);
@@ -32,20 +34,21 @@ export default function QuestionPage() {
       setPrevAnswer(null);
 
       try {
-        // Run all 4 queries in parallel instead of sequentially
+        // Run all 4 queries in parallel with shared AbortController
         const [questionResult, answersResult, prevQResult, nextQResult] = await Promise.all([
-          supabase.from('questions').select('*').eq('id', id).single(),
+          supabase.from('questions').select('*').eq('id', id).single().abortSignal(signal),
           supabase.from('user_answers')
             .select('answer, is_correct')
             .eq('user_id', user.id)
             .eq('question_id', id)
             .order('created_at', { ascending: false })
-            .limit(1),
-          supabase.from('questions').select('id').lt('id', id).order('id', { ascending: false }).limit(1),
-          supabase.from('questions').select('id').gt('id', id).order('id', { ascending: true }).limit(1),
+            .limit(1)
+            .abortSignal(signal),
+          supabase.from('questions').select('id').lt('id', id).order('id', { ascending: false }).limit(1).abortSignal(signal),
+          supabase.from('questions').select('id').gt('id', id).order('id', { ascending: true }).limit(1).abortSignal(signal),
         ]);
 
-        if (cancelled) return;
+        if (signal.aborted) return;
         if (questionResult.error) throw questionResult.error;
 
         setQuestion(questionResult.data);
@@ -55,15 +58,15 @@ export default function QuestionPage() {
           next: nextQResult.data?.[0]?.id ?? null,
         });
       } catch (err) {
-        if (!cancelled) setError(err.message || 'Failed to load question.');
+        if (!signal.aborted) setError(err.message || 'Failed to load question.');
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!signal.aborted) setLoading(false);
       }
     }
     load();
 
-    return () => { cancelled = true; };
-  }, [id, user.id, retryCount]);
+    return () => controller.abort();
+  }, [id, user?.id, retryCount]);
 
   const choices = question ? [
     { label: 'A', text: question.choices_a },
@@ -81,13 +84,18 @@ export default function QuestionPage() {
     setIsCorrect(correct);
     setSubmitted(true);
 
-    await supabase.from('user_answers').insert({
-      user_id: user.id,
-      question_id: question.id,
-      answer: selected,
-      is_correct: correct,
-    });
-    setSubmitting(false);
+    try {
+      await supabase.from('user_answers').insert({
+        user_id: user.id,
+        question_id: question.id,
+        answer: selected,
+        is_correct: correct,
+      });
+    } catch (err) {
+      console.error('Failed to save answer:', err);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (loading) return <div className="text-slate-400 mt-8">Loading...</div>;

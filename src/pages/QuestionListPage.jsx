@@ -33,30 +33,28 @@ export default function QuestionListPage() {
   const [chapter, setChapter] = useState('all');
 
   useEffect(() => {
-    let cancelled = false;
+    if (!user?.id) return;
+    const controller = new AbortController();
+    const signal = controller.signal;
 
     async function load() {
-      const t0 = performance.now();
-      console.log('[Questions] load() starting...');
       setLoading(true);
       setError(null);
       try {
         let questionsQuery = supabase.from('questions').select('id, code, category, difficulty');
         if (category > 0) questionsQuery = questionsQuery.eq('category', category);
-        questionsQuery = questionsQuery.order('code');
+        questionsQuery = questionsQuery.order('code').abortSignal(signal);
 
         const answersQuery = supabase
           .from('user_answers')
           .select('question_id, is_correct')
-          .eq('user_id', user.id);
+          .eq('user_id', user.id)
+          .abortSignal(signal);
 
-        // Run both queries in parallel instead of sequentially
+        // Run both queries in parallel
         const [questionsResult, answersResult] = await Promise.all([questionsQuery, answersQuery]);
-        console.log(`[Questions] queries done in ${(performance.now() - t0).toFixed(0)}ms — questions: ${questionsResult.data?.length ?? 'err'}, answers: ${answersResult.data?.length ?? 'err'}`);
-        if (questionsResult.error) console.error('[Questions] questions query error:', questionsResult.error);
-        if (answersResult.error) console.error('[Questions] answers query error:', answersResult.error);
 
-        if (cancelled) return;
+        if (signal.aborted) return;
         if (questionsResult.error) throw questionsResult.error;
 
         const data = questionsResult.data || [];
@@ -71,17 +69,15 @@ export default function QuestionListPage() {
         }
         setAnswered(map);
       } catch (err) {
-        console.error(`[Questions] FAILED in ${(performance.now() - t0).toFixed(0)}ms:`, err);
-        if (!cancelled) setError(err.message || 'Failed to load questions.');
+        if (!signal.aborted) setError(err.message || 'Failed to load questions.');
       } finally {
-        console.log(`[Questions] load() finished in ${(performance.now() - t0).toFixed(0)}ms`);
-        if (!cancelled) setLoading(false);
+        if (!signal.aborted) setLoading(false);
       }
     }
     load();
 
-    return () => { cancelled = true; };
-  }, [category, user.id, retryCount]);
+    return () => controller.abort();
+  }, [category, user?.id, retryCount]);
 
   const chapters = [...new Set(questions.map(q => getChapter(q.code)))].sort();
   const filtered = chapter === 'all' ? questions : questions.filter(q => getChapter(q.code) === chapter);

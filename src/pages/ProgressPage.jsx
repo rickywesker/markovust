@@ -11,7 +11,10 @@ export default function ProgressPage() {
   const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
-    let cancelled = false;
+    if (!user?.id) return;
+    const controller = new AbortController();
+    const signal = controller.signal;
+
     async function load() {
       setLoading(true);
       setError(null);
@@ -20,18 +23,19 @@ export default function ProgressPage() {
           .from('user_answers')
           .select('id, question_id, answer, is_correct, created_at, questions(code, category)')
           .eq('user_id', user.id)
-          .order('created_at', { ascending: false });
+          .order('created_at', { ascending: false })
+          .abortSignal(signal);
         if (queryError) throw queryError;
-        if (!cancelled) setAnswers(data || []);
+        if (!signal.aborted) setAnswers(data || []);
       } catch (err) {
-        if (!cancelled) setError(err.message || 'Failed to load progress.');
+        if (!signal.aborted) setError(err.message || 'Failed to load progress.');
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!signal.aborted) setLoading(false);
       }
     }
     load();
-    return () => { cancelled = true; };
-  }, [user.id, retryCount]);
+    return () => controller.abort();
+  }, [user?.id, retryCount]);
 
   const total = answers.length;
   const correct = answers.filter(a => a.is_correct).length;
