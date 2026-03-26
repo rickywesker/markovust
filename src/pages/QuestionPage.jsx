@@ -34,9 +34,16 @@ export default function QuestionPage() {
       setPrevAnswer(null);
 
       try {
-        // Run all 4 queries in parallel with shared AbortController
-        const [questionResult, answersResult, prevQResult, nextQResult] = await Promise.all([
-          supabase.from('questions').select('*').eq('id', id).single().abortSignal(signal),
+        // Get the question first (need its code for prev/next ordering)
+        const questionResult = await supabase.from('questions').select('*').eq('id', id).single().abortSignal(signal);
+        if (signal.aborted) return;
+        if (questionResult.error) throw questionResult.error;
+
+        const q = questionResult.data;
+        setQuestion(q);
+
+        // Then fetch prev answer + adjacent questions by code order (matches list page)
+        const [answersResult, prevQResult, nextQResult] = await Promise.all([
           supabase.from('user_answers')
             .select('answer, is_correct')
             .eq('user_id', user.id)
@@ -44,14 +51,11 @@ export default function QuestionPage() {
             .order('created_at', { ascending: false })
             .limit(1)
             .abortSignal(signal),
-          supabase.from('questions').select('id').lt('id', id).order('id', { ascending: false }).limit(1).abortSignal(signal),
-          supabase.from('questions').select('id').gt('id', id).order('id', { ascending: true }).limit(1).abortSignal(signal),
+          supabase.from('questions').select('id').lt('code', q.code).order('code', { ascending: false }).limit(1).abortSignal(signal),
+          supabase.from('questions').select('id').gt('code', q.code).order('code', { ascending: true }).limit(1).abortSignal(signal),
         ]);
 
         if (signal.aborted) return;
-        if (questionResult.error) throw questionResult.error;
-
-        setQuestion(questionResult.data);
         if (answersResult.data?.length > 0) setPrevAnswer(answersResult.data[0]);
         setAdjacentIds({
           prev: prevQResult.data?.[0]?.id ?? null,
