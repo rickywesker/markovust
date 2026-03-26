@@ -15,6 +15,9 @@ const FirstStep = lazy(() => import('./pages/FirstStep'))
 const Branching = lazy(() => import('./pages/Branching'))
 const RegularMC = lazy(() => import('./pages/RegularMC'))
 const Classification = lazy(() => import('./pages/Classification'))
+const PoissonProcess = lazy(() => import('./pages/PoissonProcess'))
+const PureBirth = lazy(() => import('./pages/PureBirth'))
+const BirthDeath = lazy(() => import('./pages/BirthDeath'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
 const SignupPage = lazy(() => import('./pages/SignupPage'))
 const QuestionListPage = lazy(() => import('./pages/QuestionListPage'))
@@ -41,6 +44,9 @@ export default function App() {
           <Route path="branching" element={<Branching />} />
           <Route path="regular-mc" element={<RegularMC />} />
           <Route path="classification" element={<Classification />} />
+          <Route path="poisson-process" element={<PoissonProcess />} />
+          <Route path="pure-birth" element={<PureBirth />} />
+          <Route path="birth-death" element={<BirthDeath />} />
           <Route path="exercises" element={<Exercises />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="signup" element={<SignupPage />} />

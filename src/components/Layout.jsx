@@ -12,6 +12,9 @@ const navItems = [
   { path: '/branching', label: '3.6 Branching' },
   { path: '/regular-mc', label: '4.1-4.2 Regular MC' },
   { path: '/classification', label: '4.3-4.4 Classification' },
+  { path: '/poisson-process', label: '5.1-5.3 Poisson Process' },
+  { path: '/pure-birth', label: '6.1 Pure Birth' },
+  { path: '/birth-death', label: '6.2-6.3 Birth & Death' },
   { path: '/exercises', label: 'Exercises' },
   { path: '/questions', label: 'Questions' },
   { path: '/progress', label: 'My Progress' },
@@ -37,6 +40,19 @@ const navGroups = [
       { path: '/classification', label: '4.3-4.4 Classification' },
     ],
   },
+  {
+    title: 'Chapter 5',
+    items: [
+      { path: '/poisson-process', label: '5.1-5.3 Poisson Process' },
+    ],
+  },
+  {
+    title: 'Chapter 6',
+    items: [
+      { path: '/pure-birth', label: '6.1 Pure Birth' },
+      { path: '/birth-death', label: '6.2-6.3 Birth & Death' },
+    ],
+  },
   { items: [{ path: '/exercises', label: 'Exercises' }] },
   {
     title: 'Practice',
@@ -59,7 +75,7 @@ function SidebarContent({ onNavigate }) {
         <span className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
           Markov Chains
         </span>
-        <div className="text-sm text-slate-400 mt-1">Chapters 3 &amp; 4</div>
+        <div className="text-sm text-slate-400 mt-1">Chapters 3-6</div>
       </div>
       <hr className="border-slate-800 mx-4" />
       <nav className="flex-1 overflow-y-auto py-4">
@@ -178,7 +194,7 @@ export default function Layout() {
           <PrevNextNav />
         </main>
         <footer className="border-t border-slate-800 py-6 text-center text-sm text-slate-500">
-          MATH 3425 - Stochastic Processes | Chapters 3 &amp; 4: Markov Chains
+          MATH 3425 - Stochastic Processes | Chapters 3-6: Markov Chains
         </footer>
       </div>
     </div>
