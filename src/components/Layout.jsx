@@ -15,6 +15,8 @@ const navItems = [
   { path: '/poisson-process', label: '5.1-5.3 Poisson Process' },
   { path: '/pure-birth', label: '6.1 Pure Birth' },
   { path: '/birth-death', label: '6.2-6.3 Birth & Death' },
+  { path: '/renewal-basics', label: '7.1-7.2 Renewal Basics' },
+  { path: '/renewal-asymptotic', label: '7.3 Renewal Asymptotic' },
   { path: '/exercises', label: 'Exercises' },
   { path: '/questions', label: 'Questions' },
   { path: '/progress', label: 'My Progress' },
@@ -53,6 +55,13 @@ const navGroups = [
       { path: '/birth-death', label: '6.2-6.3 Birth & Death' },
     ],
   },
+  {
+    title: 'Chapter 7',
+    items: [
+      { path: '/renewal-basics', label: '7.1-7.2 Renewal Basics' },
+      { path: '/renewal-asymptotic', label: '7.3 Renewal Asymptotic' },
+    ],
+  },
   { items: [{ path: '/exercises', label: 'Exercises' }] },
   {
     title: 'Practice',
@@ -75,7 +84,7 @@ function SidebarContent({ onNavigate }) {
         <span className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
           Markov Chains
         </span>
-        <div className="text-sm text-slate-400 mt-1">Chapters 3-6</div>
+        <div className="text-sm text-slate-400 mt-1">Chapters 3-7</div>
       </div>
       <hr className="border-slate-800 mx-4" />
       <nav className="flex-1 overflow-y-auto py-4">
@@ -194,7 +203,7 @@ export default function Layout() {
           <PrevNextNav />
         </main>
         <footer className="border-t border-slate-800 py-6 text-center text-sm text-slate-500">
-          MATH 3425 - Stochastic Processes | Chapters 3-6: Markov Chains
+          MATH 3425 - Stochastic Processes | Chapters 3-7: Markov Chains &amp; Renewal Theory
         </footer>
       </div>
     </div>

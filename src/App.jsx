@@ -18,6 +18,8 @@ const Classification = lazy(() => import('./pages/Classification'))
 const PoissonProcess = lazy(() => import('./pages/PoissonProcess'))
 const PureBirth = lazy(() => import('./pages/PureBirth'))
 const BirthDeath = lazy(() => import('./pages/BirthDeath'))
+const RenewalBasics = lazy(() => import('./pages/RenewalBasics'))
+const RenewalAsymptotic = lazy(() => import('./pages/RenewalAsymptotic'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
 const SignupPage = lazy(() => import('./pages/SignupPage'))
 const QuestionListPage = lazy(() => import('./pages/QuestionListPage'))
@@ -47,6 +49,8 @@ export default function App() {
           <Route path="poisson-process" element={<PoissonProcess />} />
           <Route path="pure-birth" element={<PureBirth />} />
           <Route path="birth-death" element={<BirthDeath />} />
+          <Route path="renewal-basics" element={<RenewalBasics />} />
+          <Route path="renewal-asymptotic" element={<RenewalAsymptotic />} />
           <Route path="exercises" element={<Exercises />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="signup" element={<SignupPage />} />
